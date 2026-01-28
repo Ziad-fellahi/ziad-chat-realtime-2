@@ -1,0 +1,69 @@
+.chat-app {
+  max-width: 900px;
+  margin: 20px auto;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.chat-header {
+  padding: 20px;
+  background: #007bff;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+}
+
+.chat-box {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #e5ddd5; /* Couleur fond WhatsApp */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.msg {
+  padding: 10px 15px;
+  border-radius: 10px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.my-msg {
+  align-self: flex-end;
+  background: #dcf8c6;
+}
+
+.other-msg {
+  align-self: flex-start;
+  background: #fff;
+}
+
+.chat-input-area {
+  padding: 20px;
+  display: flex;
+  gap: 10px;
+  background: #f0f0f0;
+}
+
+.chat-input-area input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+}
+
+.send-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  cursor: pointer;
+}

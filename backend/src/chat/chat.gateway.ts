@@ -4,17 +4,20 @@ import {
   MessageBody,
   WebSocketServer,
   ConnectedSocket,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:5173', // Port de Vite par défaut
+    origin: 'http://localhost:5173', // Ton React
+    methods: ['GET', 'POST'],
     credentials: true,
   },
 })
-export class ChatGateway {
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
@@ -22,16 +25,19 @@ export class ChatGateway {
 
   // Quand un client se connecte
   async handleConnection(client: Socket) {
-    console.log(`Client connecté : ${client.id}`);
-
-    // Envoyer l'historique des messages au nouveau client
-    const messages = await this.chatService.getAllMessages();
-    client.emit('message_history', messages);
+    console.log(`✅ Client connecté : ${client.id}`);
+    try {
+      // Envoyer l'historique des messages au nouveau client
+      const messages = await this.chatService.getAllMessages();
+      client.emit('message_history', messages);
+    } catch (error) {
+      console.error("Erreur lors de la récupération de l'historique:", error);
+    }
   }
 
   // Quand un client se déconnecte
   handleDisconnect(client: Socket) {
-    console.log(`Client déconnecté : ${client.id}`);
+    console.log(`❌ Client déconnecté : ${client.id}`);
   }
 
   // Recevoir un message du client
@@ -40,7 +46,7 @@ export class ChatGateway {
     @MessageBody() data: { user: string; text: string },
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('Message reçu:', data);
+    console.log('📩 Message reçu du client:', data);
 
     // Sauvegarder dans MongoDB
     const savedMessage = await this.chatService.createMessage(
