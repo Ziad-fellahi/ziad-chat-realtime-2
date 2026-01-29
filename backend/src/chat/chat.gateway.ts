@@ -12,7 +12,7 @@ import { ChatService } from './chat.service';
 
 @WebSocketGateway({
   cors: {
-    origin: '*', // CHANGÉ : Autorise Ngrok et ton iPhone
+    origin: '*', 
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -42,19 +42,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { user: string; text: string },
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('📩 Message reçu, envoi au Worker Thread...');
+    console.log('📩 Message reçu : envoi instantané (sans Worker)');
 
-    // 1. APPEL AU WORKER THREAD
-    // Le serveur ne "bloque" pas ici, il attend que l'assistant finisse
-    const processedText = await this.chatService.processWithWorker(data.text);
+    // 1. PLUS DE WORKER THREAD : On utilise directement le texte reçu
+    const textToSave = data.text;
 
-    // 2. SAUVEGARDE EN BASE (avec le texte modifié par le worker)
+    // 2. SAUVEGARDE EN BASE
     const savedMessage = await this.chatService.createMessage(
       data.user,
-      processedText,
+      textToSave,
     );
 
-    // 3. ENVOI À TOUT LE MONDE
+    // 3. ENVOI À TOUT LE MONDE (Instantané)
     this.server.emit('msg_to_client', {
       _id: savedMessage._id,
       user: savedMessage.user,
@@ -62,6 +61,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       createdAt: savedMessage.createdAt,
     });
     
-    console.log('✅ Message traité et diffusé');
+    console.log('✅ Message diffusé immédiatement');
   }
 }

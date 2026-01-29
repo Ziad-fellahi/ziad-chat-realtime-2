@@ -7,7 +7,7 @@ async function bootstrap() {
 
   // 2. On active le CORS juste après la création
   app.enableCors({
-    origin: '*', // Accepte les connexions de n'importe quelle URL
+    origin: '*', // Accepte les connexions de n'importe quelle URLnpx localtunnel --port 3000
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

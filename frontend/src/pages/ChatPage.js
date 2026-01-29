@@ -2,9 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import '../styles/ChatPage.css';
 
-// Il va chercher la variable Vercel, et si elle n'existe pas, il prend localhost par défaut
+// Connexion au tunnel (LocalTunnel ou Ngrok)
 const socket = io(process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000', { 
-  transports: ['websocket'] 
+  transports: ['websocket'],
+  // Ce header évite les blocages sur certains tunnels
+  extraHeaders: {
+    "bypass-tunnel-reminder": "true" 
+  }
 });
 
 function ChatPage() {
@@ -15,14 +19,39 @@ function ChatPage() {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
+    // SE SOUVENIR DE MOI
+    const savedName = localStorage.getItem('chat-user');
+    if (savedName) {
+      setUserName(savedName);
+      setIsLogged(true);
+    }
+
     socket.on('message_history', (history) => setChat(history));
     socket.on('msg_to_client', (payload) => setChat(prev => [...prev, payload]));
-    return () => { socket.off('message_history'); socket.off('msg_to_client'); };
+    
+    return () => { 
+      socket.off('message_history'); 
+      socket.off('msg_to_client'); 
+    };
   }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (userName.trim()) {
+      localStorage.setItem('chat-user', userName);
+      setIsLogged(true);
+    }
+  };
+
+  // CHANGER DE NOM
+  const handleLogout = () => {
+    localStorage.removeItem('chat-user');
+    window.location.reload(); 
+  };
 
   const sendMessage = (e) => {
     e.preventDefault();
@@ -35,13 +64,14 @@ function ChatPage() {
   if (!isLogged) {
     return (
       <div className="home-container">
-        <form onSubmit={(e) => { e.preventDefault(); if(userName) setIsLogged(true); }}>
+        <form onSubmit={handleLogin}>
           <input 
             style={{padding: '10px', borderRadius: '5px', border: '1px solid #ccc'}}
             placeholder="Ton pseudo..." 
+            value={userName}
             onChange={e => setUserName(e.target.value)} 
           />
-          <button className="start-button" style={{marginLeft: '10px', border: 'none', cursor: 'pointer'}}>Entrer</button>
+          <button className="start-button" style={{marginLeft: '10px', padding: '10px', cursor: 'pointer'}}>Entrer</button>
         </form>
       </div>
     );
@@ -49,9 +79,9 @@ function ChatPage() {
 
   return (
     <div className="chat-app">
-      <header className="chat-header">
-        <span>Salon de discussion</span>
-        <strong>{userName}</strong>
+      <header className="chat-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px' }}>
+        <span>Utilisateur : <strong>{userName}</strong></span>
+        <button onClick={handleLogout} style={{ fontSize: '10px', cursor: 'pointer', background: '#eee', border: '1px solid #ccc' }}>Changer de nom</button>
       </header>
       <div className="chat-box">
         {chat.map((m, i) => (
@@ -68,4 +98,5 @@ function ChatPage() {
     </div>
   );
 }
+
 export default ChatPage;
