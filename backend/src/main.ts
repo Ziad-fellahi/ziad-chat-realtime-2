@@ -2,18 +2,21 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  // 1. On crée d'abord l'application (important !)
   const app = await NestFactory.create(AppModule);
-
-  // 2. On active le CORS juste après la création
+  
+  // Autorise ton frontend Vercel à communiquer avec ce serveur
   app.enableCors({
-    origin: '*', // Accepte les connexions de n'importe quelle URLnpx localtunnel --port 3000
+    origin: "*", 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
+
+  // On récupère le port de Render (ou 5000 par défaut)
+  const port = process.env.PORT || 5000;
+
+  // IMPORTANT : Une seule ligne listen avec le port ET l'adresse '0.0.0.0'
+  await app.listen(port, '0.0.0.0'); 
   
-// Dans main.ts
-await app.listen(5000, '0.0.0.0'); 
-console.log("Le serveur tourne sur http://localhost:5000");
+  console.log(`🚀 Serveur lancé sur le port : ${port}`);
 }
 bootstrap();
