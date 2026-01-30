@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import '../styles/ChatPage.css';
 
@@ -8,21 +9,27 @@ function ChatPage() {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
   const [userName, setUserName] = useState('');
-  const [isLogged, setIsLogged] = useState(false);
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // On récupère STRICTEMENT la variable Vercel
-    const backendUrl = process.env.REACT_APP_BACKEND_URL;
-    
-    console.log("--- TENTATIVE DE CONNEXION ---");
-    console.log("URL utilisée :", backendUrl);
-
-    if (!backendUrl) {
-      console.error("ERREUR : La variable REACT_APP_BACKEND_URL est vide sur Vercel !");
+    // Vérifier l'authentification
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
       return;
     }
-
+    // Décoder le username du token (optionnel, sinon requête API)
+    const payload = token.split('.')[1];
+    try {
+      const decoded = JSON.parse(atob(payload));
+      setUserName(decoded.username);
+    } catch {
+      setUserName('Utilisateur');
+    }
+    // Connexion socket
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    if (!backendUrl) return;
     if (!socket) {
       socket = io(backendUrl, { 
         transports: ['websocket'],
@@ -33,55 +40,34 @@ function ChatPage() {
         }
       });
     }
-
-    // 3. GESTION DU LOGIN AUTOMATIQUE
-    const savedName = localStorage.getItem('chat-user');
-    if (savedName) {
-      setUserName(savedName);
-      setIsLogged(true);
-    }
-
-    // 4. ÉCOUTEURS D'ÉVÉNEMENTS
     socket.on('connect', () => {
-      console.log("✅ Connecté au serveur Socket.io ! ID:", socket.id);
+      // ...
     });
-
     socket.on('connect_error', (err) => {
-      console.error("❌ Erreur de connexion au socket :", err.message);
+      // ...
     });
-
     socket.on('message_history', (history) => {
       setChat(history);
     });
-
     socket.on('msg_to_client', (payload) => {
       setChat(prev => [...prev, payload]);
     });
-    
     return () => { 
       socket.off('message_history'); 
       socket.off('msg_to_client');
       socket.off('connect');
       socket.off('connect_error');
     };
-  }, []);
+  }, [navigate]);
 
   // Scroll automatique
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (userName.trim()) {
-      localStorage.setItem('chat-user', userName);
-      setIsLogged(true);
-    }
-  };
-
   const handleLogout = () => {
-    localStorage.removeItem('chat-user');
-    window.location.reload(); 
+    localStorage.removeItem('token');
+    navigate('/login');
   };
 
   const sendMessage = (e) => {
@@ -93,23 +79,6 @@ function ChatPage() {
   };
 
   // --- RENDU UI ---
-
-  if (!isLogged) {
-    return (
-      <div className="home-container">
-        <form onSubmit={handleLogin}>
-          <input 
-            style={{padding: '10px', borderRadius: '5px', border: '1px solid #ccc'}}
-            placeholder="Ton pseudo..." 
-            value={userName}
-            onChange={e => setUserName(e.target.value)} 
-          />
-          <button className="start-button" style={{marginLeft: '10px', padding: '10px', cursor: 'pointer'}}>Entrer</button>
-        </form>
-      </div>
-    );
-  }
-
   return (
     <div className="chat-app">
       <header className="chat-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px' }}>
