@@ -11,13 +11,23 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    // Définition dynamique de l'URL : utilise la variable Vercel ou localhost par défaut
+    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
     try {
-      const res = await fetch('http://localhost:5000/auth/register', {
+      const res = await fetch(`${BACKEND_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       });
-      if (!res.ok) throw new Error('Erreur lors de l\'inscription');
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Erreur lors de l\'inscription');
+      }
+
+      // Si l'inscription réussit, on redirige vers la page de login
       navigate('/login');
     } catch (err) {
       setError(err.message);
@@ -35,7 +45,7 @@ export default function Register() {
       justifyContent: 'center',
       overflow: 'hidden'
     }}>
-      {/* Overlay sombre pour lisibilité */}
+      {/* Overlay sombre pour la lisibilité */}
       <div style={{
         position: 'fixed',
         top: 0,
@@ -45,14 +55,76 @@ export default function Register() {
         background: 'rgba(30,32,34,0.82)',
         zIndex: 0
       }} />
-      <div className="register-container" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.25)', borderRadius: 16, background: '#23272a', color: '#fff', padding: '2.5rem 2rem', minWidth: 340, position: 'relative', zIndex: 1 }}>
-        <h2 style={{ color: '#fff', marginBottom: 24, fontWeight: 700, letterSpacing: 1, textShadow: '0 2px 8px rgba(0,0,0,0.18)' }}>Inscription</h2>
+
+      <div className="register-container" style={{ 
+        boxShadow: '0 4px 24px rgba(0,0,0,0.25)', 
+        borderRadius: 16, 
+        background: '#23272a', 
+        color: '#fff', 
+        padding: '2.5rem 2rem', 
+        minWidth: 340, 
+        position: 'relative', 
+        zIndex: 1 
+      }}>
+        <h2 style={{ 
+          color: '#fff', 
+          marginBottom: 24, 
+          fontWeight: 700, 
+          letterSpacing: 1, 
+          textShadow: '0 2px 8px rgba(0,0,0,0.18)' 
+        }}>Inscription</h2>
+
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          <input type="text" placeholder="Nom d'utilisateur" value={username} onChange={e => setUsername(e.target.value)} required style={{ borderRadius: 8, border: '1px solid #444', padding: '0.9rem', fontSize: 16, background: '#36393f', color: '#fff' }} />
-          <input type="password" placeholder="Mot de passe" value={password} onChange={e => setPassword(e.target.value)} required style={{ borderRadius: 8, border: '1px solid #444', padding: '0.9rem', fontSize: 16, background: '#36393f', color: '#fff' }} />
-          <button type="submit" style={{ background: '#5865f2', color: '#fff', border: 'none', borderRadius: 8, padding: '0.9rem', fontWeight: 700, fontSize: 17, marginTop: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.10)', cursor: 'pointer', transition: 'background 0.2s' }}>S'inscrire</button>
+          <input 
+            type="text" 
+            placeholder="Nom d'utilisateur" 
+            value={username} 
+            onChange={e => setUsername(e.target.value)} 
+            required 
+            style={{ borderRadius: 8, border: '1px solid #444', padding: '0.9rem', fontSize: 16, background: '#36393f', color: '#fff' }} 
+          />
+          <input 
+            type="password" 
+            placeholder="Mot de passe" 
+            value={password} 
+            onChange={e => setPassword(e.target.value)} 
+            required 
+            style={{ borderRadius: 8, border: '1px solid #444', padding: '0.9rem', fontSize: 16, background: '#36393f', color: '#fff' }} 
+          />
+          <button 
+            type="submit" 
+            style={{ 
+              background: '#5865f2', 
+              color: '#fff', 
+              border: 'none', 
+              borderRadius: 8, 
+              padding: '0.9rem', 
+              fontWeight: 700, 
+              fontSize: 17, 
+              marginTop: 8, 
+              boxShadow: '0 2px 8px rgba(0,0,0,0.10)', 
+              cursor: 'pointer' 
+            }}
+          >
+            S'inscrire
+          </button>
         </form>
-        {error && <div className="error" style={{ color: '#d32f2f', marginTop: 18, textAlign: 'center', fontWeight: 500 }}>{error}</div>}
+
+        {error && (
+          <div className="error" style={{ color: '#ff4d4d', marginTop: 18, textAlign: 'center', fontWeight: 500 }}>
+            {error}
+          </div>
+        )}
+
+        <div style={{ marginTop: 20, textAlign: 'center', fontSize: 14 }}>
+          <span style={{ color: '#b9bbbe' }}>Déjà un compte ? </span>
+          <button 
+            onClick={() => navigate('/login')} 
+            style={{ background: 'none', border: 'none', color: '#00a8fc', cursor: 'pointer', padding: 0 }}
+          >
+            Se connecter
+          </button>
+        </div>
       </div>
     </div>
   );
