@@ -4,8 +4,8 @@ import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
-    // On utilise process.env pour récupérer le lien caché sur Render
-    MongooseModule.forRoot(process.env.MONGODB_URI!), 
+    // Ici, on remplace l'adresse '127.0.0.1' par la variable Render
+    MongooseModule.forRoot(process.env.MONGODB_URI!),
     ChatModule,
   ],
 })
