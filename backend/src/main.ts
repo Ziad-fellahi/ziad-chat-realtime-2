@@ -4,12 +4,11 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  // Autorise ton frontend Vercel à communiquer avec ce serveur
-  app.enableCors({
-    origin: "*", 
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-  });
+ app.enableCors({
+  origin: true, // Pour être sûr que ça marche tout de suite, 'true' autorise tout
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+});
 
   // On récupère le port de Render (ou 5000 par défaut)
   const port = process.env.PORT || 5000;
