@@ -2,59 +2,68 @@ import React, { useState } from 'react';
 import '../styles/GitResources.css';
 
 const GitResources = () => {
-  const [copyStatus, setCopyStatus] = useState('');
+  const [copiedId, setCopiedId] = useState(null);
 
-  const copyToClipboard = (text, label) => {
-    navigator.clipboard.writeText(text);
-    setCopyStatus(label);
-    setTimeout(() => setCopyStatus(''), 2000);
+  const copyToClipboard = (text, id) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 1500);
+    });
   };
 
   const copyFullSequence = () => {
     const sequence = "git add .\ngit commit -m 'Mise à jour'\ngit push origin main";
-    copyToClipboard(sequence, 'Séquence complète');
+    copyToClipboard(sequence, 'full-seq');
   };
 
   const sections = [
     {
-      title: "⚡ Séquence Rapide (Le Quotidien)",
+      title: "⚡ Séquence Quotidienne",
       isSpecial: true,
       commands: [
-        { cmd: "git add .", desc: "Préparer tous les fichiers." },
-        { cmd: "git commit -m 'Message'", desc: "Enregistrer localement." },
-        { cmd: "git push origin main", desc: "Envoyer sur GitHub." }
+        { id: 'c1', cmd: "git add .", desc: "Préparer tous les fichiers modifiés." },
+        { id: 'c2', cmd: "git commit -m 'Update'", desc: "Enregistrer les modifications localement." },
+        { id: 'c3', cmd: "git push origin main", desc: "Envoyer le travail sur GitHub." }
       ]
     },
     {
       title: "🌿 Branches & Navigation",
       commands: [
-        { cmd: "git branch", desc: "Lister les branches." },
-        { cmd: "git checkout <nom>", desc: "Changer de branche." },
-        { cmd: "git checkout -b <nom>", desc: "Créer et changer de branche." }
+        { id: 'c4', cmd: "git branch", desc: "Lister les branches existantes." },
+        { id: 'c5', cmd: "git checkout <nom>", desc: "Changer de branche." },
+        { id: 'c6', cmd: "git checkout -b <nom>", desc: "Créer et changer de branche." }
       ]
     },
     {
-      title: "🌐 Configuration & URL",
+      title: "🔄 Fusion & Synchronisation",
       commands: [
-        { cmd: "git remote -v", desc: "Voir l'URL actuelle." },
-        { cmd: "git remote set-url origin <url>", desc: "Changer l'URL du dépôt." }
+        { id: 'c7', cmd: "git pull", desc: "Récupérer le travail des autres." },
+        { id: 'c8', cmd: "git merge <source>", desc: "Fusionner une branche." },
+        { id: 'c9', cmd: "git merge --abort", desc: "Annuler une fusion qui se passe mal." }
       ]
     },
     {
-      title: "🔄 Fusion (Merge)",
+      title: "🌐 Configuration",
       commands: [
-        { cmd: "git merge <source>", desc: "Fusionner une branche." },
-        { cmd: "git merge --abort", desc: "Annuler un merge qui se passe mal." }
+        { id: 'c10', cmd: "git remote -v", desc: "Voir l'URL actuelle du dépôt." },
+        { id: 'c11', cmd: "git remote set-url origin <url>", desc: "Changer l'URL de destination." }
       ]
     }
   ];
 
+  // Icône de copie minimaliste (SVG)
+  const CopyIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+    </svg>
+  );
+
   return (
     <div className="resources-container">
       <div className="resources-header">
-        <h1>Guide de Survie <span className="text-gradient">Git</span></h1>
-        <p>Cliquez sur n'importe quelle commande pour la copier.</p>
-        {copyStatus && <div className="copy-toast">Copié : {copyStatus}</div>}
+        <h1>Guide <span className="text-gradient">Git</span></h1>
+        <p>Cliquez sur une commande pour la copier instantanément dans votre terminal.</p>
       </div>
 
       <div className="resources-grid">
@@ -63,17 +72,26 @@ const GitResources = () => {
             <div className="card-header">
               <h3>{section.title}</h3>
               {section.isSpecial && (
-                <button className="copy-all-btn" onClick={copyFullSequence}>
-                  Tout copier (Add + Commit + Push)
+                <button 
+                  className={`copy-all-btn ${copiedId === 'full-seq' ? 'copied' : ''}`}
+                  onClick={copyFullSequence}
+                >
+                  {copiedId === 'full-seq' ? 'Copié !' : 'Copier la séquence'}
                 </button>
               )}
             </div>
             <div className="command-list">
-              {section.commands.map((c, i) => (
-                <div key={i} className="command-item" onClick={() => copyToClipboard(c.cmd, c.cmd)}>
+              {section.commands.map((c) => (
+                <div 
+                  key={c.id} 
+                  className={`command-item ${copiedId === c.id ? 'active' : ''}`}
+                  onClick={() => copyToClipboard(c.cmd, c.id)}
+                >
                   <div className="cmd-row">
                     <code>{c.cmd}</code>
-                    <span className="copy-icon">📋</span>
+                    <span className="copy-status">
+                      {copiedId === c.id ? 'Copié' : <CopyIcon />}
+                    </span>
                   </div>
                   <p>{c.desc}</p>
                 </div>

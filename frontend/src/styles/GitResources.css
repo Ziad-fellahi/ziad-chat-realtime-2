@@ -12,12 +12,6 @@
   margin-bottom: 50px;
 }
 
-.resources-header h1 {
-  font-size: 3rem;
-  font-weight: 800;
-  margin-bottom: 10px;
-}
-
 .text-gradient {
   background: linear-gradient(90deg, #5865f2, #a29bfe);
   -webkit-background-clip: text;
@@ -27,8 +21,8 @@
 
 .resources-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px;
   max-width: 1200px;
   width: 100%;
 }
@@ -38,61 +32,94 @@
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 20px;
-  padding: 30px;
-  transition: transform 0.3s ease;
+  padding: 24px;
 }
 
-.resource-card:hover {
-  transform: translateY(-5px);
-  border-color: rgba(88, 101, 242, 0.3);
+.special-card {
+  border: 1px solid rgba(88, 101, 242, 0.3);
+  background: rgba(88, 101, 242, 0.05);
 }
 
-.resource-card h3 {
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
-  color: #5865f2;
-  font-size: 1.5rem;
 }
 
+/* Bouton Séquence (Feedback Visuel) */
+.copy-all-btn {
+  background: #5865f2;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.copy-all-btn:active {
+  transform: scale(0.95);
+}
+
+.copy-all-btn.copied {
+  background: #43b581;
+}
+
+/* Ligne de commande cliquable */
 .command-item {
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  user-select: none; /* Désactive la sélection bleue */
+}
+
+.command-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.command-item:active {
+  transform: scale(0.98); /* Effet d'appui physique */
+}
+
+.command-item.active {
+  border-color: #43b581;
+  background: rgba(67, 181, 129, 0.1);
+}
+
+.cmd-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
 }
 
 .command-item code {
-  background: #111;
-  color: #ff79c6; /* Couleur style code */
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-family: 'Courier New', monospace;
-  font-size: 0.95rem;
-  display: inline-block;
-  margin-bottom: 5px;
+  color: #fff;
+  font-size: 1rem;
+  font-family: 'Fira Code', monospace;
+}
+
+.copy-status {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #5865f2;
+  text-transform: uppercase;
+}
+
+.command-item.active .copy-status {
+  color: #43b581;
 }
 
 .command-item p {
   color: #b9bbbe;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   margin: 0;
-}
-
-.pro-tip {
-  margin-top: 40px;
-  background: rgba(88, 101, 242, 0.1);
-  border: 1px border;
-  border-color: rgba(88, 101, 242, 0.3);
-  padding: 20px;
-  border-radius: 12px;
-  color: #fff;
-  max-width: 800px;
-  text-align: center;
-  line-height: 1.6;
-}
-
-.pro-tip code {
-  color: #5865f2;
-  font-weight: bold;
-  background: rgba(0,0,0,0.2);
-  padding: 2px 5px;
-  border-radius: 4px;
 }
