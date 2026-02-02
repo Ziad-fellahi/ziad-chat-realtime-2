@@ -41,7 +41,7 @@ function Dashboard() {
   };
 
   const fetchMessages = () => {
-    fetch('http://localhost:3001/chat/messages?limit=200')
+    fetch('http://46.224.42.239:5000/chat/messages?limit=200')
       .then((res) => {
         if (!res.ok) throw new Error('Erreur lors du chargement des messages');
         return res.json();
