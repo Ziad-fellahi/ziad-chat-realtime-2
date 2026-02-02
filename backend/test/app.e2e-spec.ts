@@ -12,7 +12,6 @@ describe('AppController (e2e)', () => {
       imports: [AppModule],
     }).compile();
 
-    
     app = moduleFixture.createNestApplication();
     await app.init();
   });
@@ -24,3 +23,5 @@ describe('AppController (e2e)', () => {
       .expect('Hello World!');
   });
 });
+
+// (Removed invalid JSON block; place this in tsconfig.json if needed)
