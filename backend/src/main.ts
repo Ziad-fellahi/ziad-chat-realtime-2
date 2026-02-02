@@ -11,7 +11,7 @@ async function bootstrap() {
 });
 
   // On récupère le port de Render (ou 5000 par défaut)
-  const port = process.env.PORT || 5000;
+  const port = process.env.PORT || 3001;
 
   // IMPORTANT : Une seule ligne listen avec le port ET l'adresse '0.0.0.0'
   await app.listen(port, '0.0.0.0'); 

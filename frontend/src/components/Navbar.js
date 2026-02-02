@@ -36,6 +36,11 @@ function Navbar() {
           <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
             Accueil
           </Link>
+          {localStorage.getItem('role') === 'admin' && (
+            <Link to="/dashboard" className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>
+              Tableau de bord
+            </Link>
+          )}
           <Link to="/chat" className={`nav-link ${location.pathname === '/chat' ? 'active' : ''}`}>
             Chat
           </Link>

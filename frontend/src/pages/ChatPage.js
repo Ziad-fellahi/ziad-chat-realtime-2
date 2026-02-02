@@ -28,7 +28,7 @@ function ChatPage() {
       setUserName('Utilisateur');
     }
 
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
     
     if (!socket) {
       socket = io(backendUrl, { 

@@ -13,7 +13,7 @@ export default function Login() {
     setError('');
     try {
   // On récupère l'URL depuis les variables d'environnement, sinon on utilise localhost par défaut
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
 
 const res = await fetch(`${BACKEND_URL}/auth/login`, {
   
@@ -24,6 +24,9 @@ const res = await fetch(`${BACKEND_URL}/auth/login`, {
       if (!res.ok) throw new Error('Identifiants invalides');
       const data = await res.json();
       localStorage.setItem('token', data.access_token);
+      if (data.role) {
+        localStorage.setItem('role', data.role);
+      }
       navigate('/');
     } catch (err) {
       setError(err.message);

@@ -46,4 +46,8 @@ export class ChatService {
   async getAllMessages(): Promise<Message[]> {
     return await this.messageModel.find().sort({ createdAt: 1 }).exec();
   }
+
+  async getRecentMessages(limit = 200): Promise<Message[]> {
+    return await this.messageModel.find().sort({ createdAt: -1 }).limit(limit).exec();
+  }
 }
