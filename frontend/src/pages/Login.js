@@ -23,6 +23,9 @@ const res = await fetch(`${BACKEND_URL}/auth/login`, {
       if (!res.ok) throw new Error('Identifiants invalides');
       const data = await res.json();
       localStorage.setItem('token', data.access_token);
+      if (data.role) {
+        localStorage.setItem('role', data.role);
+      }
       navigate('/');
     } catch (err) {
       setError(err.message);

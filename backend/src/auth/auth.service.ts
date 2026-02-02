@@ -13,13 +13,13 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(username: string, password: string) {
+  async register(username: string, password: string, role: string = 'user') {
     const existing = await this.userModel.findOne({ username });
     if (existing) throw new UnauthorizedException('User already exists');
     const hashed = await bcrypt.hash(password, 10);
-    const user = new this.userModel({ username, password: hashed });
+    const user = new this.userModel({ username, password: hashed, role });
     await user.save();
-    return { username: user.username };
+    return { username: user.username, role: user.role };
   }
 
   async login(username: string, password: string) {
@@ -27,10 +27,11 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('Invalid credentials');
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
-    const payload = { sub: user._id, username: user.username };
+    const payload = { sub: user._id, username: user.username, role: user.role };
     return {
       access_token: this.jwtService.sign(payload),
       username: user.username,
+      role: user.role,
     };
   }
 }
