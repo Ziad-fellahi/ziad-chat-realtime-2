@@ -14,7 +14,7 @@ async function bootstrap() {
   const port = process.env.PORT || 5000;
 
   // 2. On retire '0.0.0.0' pour laisser NestJS utiliser 'localhost' par défaut
-  // C'est ce que le tunnel Cloudflare attend.
+  // C'est ce que le tunnel Cloudflare attend
   await app.listen(port); 
   
   console.log(`🚀 Serveur lancé sur : http://localhost:${port}`);
