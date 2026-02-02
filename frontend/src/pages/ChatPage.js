@@ -19,7 +19,7 @@ function ChatPage() {
       return;
     }
     
-    // Extraction du nom d'utilisateur depuis le token
+    // Extraction sécurisée du nom d'utilisateur depuis le JWT
     try {
       const payload = token.split('.')[1];
       const decoded = JSON.parse(atob(payload));
@@ -29,6 +29,7 @@ function ChatPage() {
     }
 
     const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    
     if (!socket) {
       socket = io(backendUrl, { 
         transports: ['websocket'],
@@ -38,6 +39,7 @@ function ChatPage() {
       });
     }
 
+    // Écoute des événements Socket
     socket.on('message_history', (history) => setChat(history));
     socket.on('msg_to_client', (payload) => setChat(prev => [...prev, payload]));
 
@@ -47,6 +49,7 @@ function ChatPage() {
     };
   }, [navigate]);
 
+  // Scroll automatique vers le bas à chaque nouveau message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
@@ -91,7 +94,7 @@ function ChatPage() {
                   <div className="bubble">{m.text}</div>
                 </div>
                 {isMine && (
-                  <div className="user-avatar" style={{ backgroundColor: '#43b581' }}>
+                  <div className="user-avatar my-avatar">
                     {userName.charAt(0).toUpperCase()}
                   </div>
                 )}
