@@ -46,13 +46,12 @@ function ChatPage() {
   const send = (e) => {
     e.preventDefault();
     if (message.trim()) {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       
       socket.emit('msg_to_server', { 
         user: userName, 
         text: message, 
-        time: timeStr, // Envoi de l'heure au serveur
+        time: timeStr, 
         role: userRole 
       });
       setMessage('');
@@ -65,23 +64,19 @@ function ChatPage() {
         <div className="chat-messages-area">
           {chat.map((m, i) => {
             const isMine = m.user === userName;
+            const initials = m.user ? m.user.charAt(0).toUpperCase() : '?';
             
-            // LOGIQUE DE L'HEURE : Sécurité si m.time est vide
-            const displayTime = m.time || 
-              (m.createdAt ? new Date(m.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 
-              new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
-
             return (
               <div key={i} className={`msg-group ${isMine ? 'mine' : 'theirs'}`}>
-                <div className="user-avatar-circle">{m.user?.charAt(0).toUpperCase()}</div>
+                <div className="user-avatar-circle">{initials}</div>
                 <div className="bubble-container">
                   <div className="username-label">
                     {m.user}
                     {m.role === 'admin' && <span className="admin-badge">Admin</span>}
                   </div>
                   <div className="bubble">
-                    <span className="msg-text">{m.text}</span>
-                    <span className="msg-time">{displayTime}</span>
+                    <span>{m.text}</span>
+                    <span className="msg-time">{m.time || '--:--'}</span>
                   </div>
                 </div>
               </div>

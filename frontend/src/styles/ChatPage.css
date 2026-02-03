@@ -1,18 +1,19 @@
-/* Structure de la page App-Shell */
+/* Structure de l'application */
 html, body {
   margin: 0; padding: 0; height: 100vh; overflow: hidden;
-  background-color: #0d1117;
+  background-color: #0b0e11; /* Fond encore plus sombre */
+  font-family: 'Inter', -apple-system, sans-serif;
 }
 
 .chat-page-wrapper {
-  height: calc(100vh - 70px); 
+  height: calc(100vh - 70px);
   width: 100vw;
   display: flex;
   justify-content: center;
-  align-items: flex-start; 
-  padding-top: 40px;      
+  align-items: flex-start;
+  padding-top: 40px;
   box-sizing: border-box;
-  position: fixed;        
+  position: fixed;
   top: 70px;
   left: 0;
 }
@@ -20,14 +21,14 @@ html, body {
 .chat-main-container {
   width: 95%;
   max-width: 850px;
-  height: 82vh;            
+  height: 82vh;
   background: #161b22;
   border: 1px solid #30363d;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
 }
 
 .chat-messages-area {
@@ -36,7 +37,7 @@ html, body {
   padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   background: #0d1117;
 }
 
@@ -53,17 +54,18 @@ html, body {
 }
 
 .user-avatar-circle {
-  width: 36px;
-  height: 36px;
-  background: #30363d;
+  width: 34px;
+  height: 34px;
+  background: #21262d;
   color: #58a6ff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  font-weight: 700;
+  font-size: 0.75rem;
   flex-shrink: 0;
-  border: 1px solid #3b424b;
+  border: 1px solid #30363d;
 }
 
 .bubble-container {
@@ -73,30 +75,29 @@ html, body {
 }
 
 .username-label {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #8b949e;
-  margin-left: 2px;
+  font-weight: 500;
+  margin: 0 4px;
 }
 
-.mine .username-label {
-  text-align: right;
-  margin-right: 2px;
-}
+.mine .username-label { text-align: right; }
 
 .bubble {
   padding: 10px 16px;
-  border-radius: 14px;
-  font-size: 0.95rem;
+  border-radius: 12px;
+  font-size: 0.92rem;
   color: #f0f6fc;
   display: flex;
-  flex-direction: column; /* Heure sous le texte pour plus de clarté */
-  min-width: 60px;
+  flex-direction: column;
+  min-width: 80px;
   position: relative;
+  line-height: 1.5;
 }
 
-/* LE NOUVEAU VERT : Sobre et élégant */
+/* DESIGN DES MESSAGES (Bleu Nuit Pro) */
 .mine .bubble {
-  background: #238636;
+  background: #1f6feb; /* Bleu pro style GitHub/Cloud */
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-bottom-right-radius: 2px;
 }
@@ -107,27 +108,33 @@ html, body {
   border-bottom-left-radius: 2px;
 }
 
+/* L'HEURE : Intégration fine */
 .msg-time {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   color: rgba(255, 255, 255, 0.5);
   align-self: flex-end;
-  margin-top: 4px;
+  margin-top: 6px;
   font-weight: 400;
 }
 
+.theirs .msg-time { color: #8b949e; }
+
+/* BADGE ADMIN */
 .admin-badge {
   color: #f85149;
-  font-size: 0.65rem;
-  font-weight: bold;
+  font-size: 0.6rem;
+  font-weight: 900;
   border: 1px solid #f85149;
-  padding: 0px 5px;
-  border-radius: 4px;
+  padding: 0px 4px;
+  border-radius: 3px;
   text-transform: uppercase;
   margin-left: 6px;
+  background: rgba(248, 81, 73, 0.05);
 }
 
+/* FOOTER */
 .chat-footer-form {
-  padding: 20px;
+  padding: 18px 24px;
   background: #161b22;
   border-top: 1px solid #30363d;
   display: flex;
@@ -142,14 +149,20 @@ html, body {
   padding: 12px 16px;
   color: white;
   outline: none;
+  font-size: 0.95rem;
 }
 
+.chat-input:focus { border-color: #58a6ff; }
+
 .send-btn {
-  background: #238636;
+  background: #1f6feb;
   color: white;
   border: none;
   padding: 0 20px;
   border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
+  transition: opacity 0.2s;
 }
+
+.send-btn:hover { opacity: 0.9; }
