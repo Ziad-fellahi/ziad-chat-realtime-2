@@ -121,3 +121,17 @@
 .btn-logout-icon:hover {
   background: rgba(255, 71, 87, 0.1);
 }
+
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 80px; /* Assure-toi de définir une hauteur */
+  z-index: 1000;
+  
+  /* On ajoute une ombre pour bien la séparer du contenu */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  
+  /* Note : Si elle est 'fixed', le 'margin-bottom' ne marchera pas. 
+     Il faut utiliser le padding-top sur les pages comme dans l'Option 1. */
+}
