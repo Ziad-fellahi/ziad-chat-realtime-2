@@ -19,7 +19,7 @@ function ChatPage() {
     try {
       const decoded = JSON.parse(atob(token.split('.')[1]));
       setUserName(decoded.username);
-    } catch (e) { setUserName('Ghost'); }
+    } catch (e) { setUserName('?'); }
 
     if (!socket) {
       socket = io(process.env.REACT_APP_BACKEND_URL, {
@@ -31,7 +31,10 @@ function ChatPage() {
     socket.on('message_history', (h) => setChat(h));
     socket.on('msg_to_client', (p) => setChat(prev => [...prev, p]));
 
-    return () => { socket.off('msg_to_client'); };
+    return () => { 
+        socket.off('message_history');
+        socket.off('msg_to_client'); 
+    };
   }, [navigate]);
 
   useEffect(() => {
@@ -41,7 +44,14 @@ function ChatPage() {
   const send = (e) => {
     e.preventDefault();
     if (message.trim()) {
-      socket.emit('msg_to_server', { user: userName, text: message });
+      const now = new Date();
+      const timeStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+      
+      socket.emit('msg_to_server', { 
+        user: userName, 
+        text: message, 
+        time: timeStr 
+      });
       setMessage('');
     }
   };
@@ -49,31 +59,34 @@ function ChatPage() {
   return (
     <div className="chat-page-wrapper">
       <div className="chat-main-container">
-        <header className="chat-header-custom">
-          <div className="user-info">
-            <span>● {userName}</span>
-          </div>
-          <button onClick={() => { localStorage.clear(); navigate('/login'); }} 
-                  style={{background: 'none', border: '1px solid #ff4b2b', color: '#ff4b2b', padding: '5px 10px', borderRadius: '8px', cursor: 'pointer'}}>
-            EXIT
-          </button>
-        </header>
-
         <div className="chat-messages-area">
-          {chat.map((m, i) => (
-            <div key={i} className={`msg-group ${m.user === userName ? 'mine' : 'theirs'}`}>
-              <span style={{fontSize: '0.7rem', color: '#64748b', marginBottom: '5px', alignSelf: m.user === userName ? 'flex-end' : 'flex-start'}}>
-                {m.user}
-              </span>
-              <div className="bubble">{m.text}</div>
-            </div>
-          ))}
+          {chat.map((m, i) => {
+            const isMine = m.user === userName;
+            const initial = m.user ? m.user.charAt(0) : '?';
+            return (
+              <div key={i} className={`msg-group ${isMine ? 'mine' : 'theirs'}`}>
+                <div className="user-avatar-circle">{initial}</div>
+                <div className="bubble-container">
+                  {!isMine && <span style={{fontSize: '0.7rem', color: '#38bdf8', marginBottom: '2px', marginLeft: '5px'}}>{m.user}</span>}
+                  <div className="bubble">{m.text}</div>
+                  <span className="msg-time">{m.time || '--:--'}</span>
+                </div>
+              </div>
+            );
+          })}
           <div ref={messagesEndRef} />
         </div>
 
         <form onSubmit={send} className="chat-footer-form">
-          <input value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Type a message..." />
-          <button type="submit" className="send-icon-btn">➤</button>
+          <input 
+            className="chat-input"
+            value={message} 
+            onChange={(e) => setMessage(e.target.value)} 
+            placeholder="Écris ton message ici..." 
+          />
+          <button type="submit" style={{background: '#38bdf8', color: '#000', border: 'none', borderRadius: '8px', padding: '0 20px', cursor: 'pointer', fontWeight: 'bold'}}>
+            Envoyer
+          </button>
         </form>
       </div>
     </div>
