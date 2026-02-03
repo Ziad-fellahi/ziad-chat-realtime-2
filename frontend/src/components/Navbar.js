@@ -1,49 +1,53 @@
-// src/components/Navbar.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import '../styles/Navbar.css';
 
 function Navbar() {
-  const token = localStorage.getItem('token');
-  let user = null;
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
-  if (token) {
-    try {
-      // On décode le milieu du JWT (le payload)
-      user = JSON.parse(atob(token.split('.')[1]));
-    } catch (e) {
-      console.error("Token invalide");
+  const loadUser = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decoded = JSON.parse(atob(token.split('.')[1]));
+        setUser(decoded);
+      } catch (e) {
+        setUser(null);
+      }
+    } else {
+      setUser(null);
     }
-  }
+  };
+
+  useEffect(() => {
+    loadUser();
+    // Écoute les changements de storage pour mettre à jour si besoin
+    window.addEventListener('storage', loadUser);
+    return () => window.removeEventListener('storage', loadUser);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setUser(null); // On vide l'état immédiatement !
+    navigate('/login');
+  };
 
   return (
-    <nav className="navbar" style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 30px', background: '#161b22', borderBottom: '1px solid #30363d', color: 'white', position: 'fixed', width: '100%', top: 0, zIndex: 1000 }}>
-      <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>GovoStage</div>
+    <nav className="navbar">
+      <div className="nav-logo">GOVOSTAGE</div>
       
-      <div>
+      <div className="nav-right">
         {user ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-            <span>{user.username}</span>
-            
-            {/* BADGE ADMIN NAVBAR */}
-            {user.role === 'admin' && (
-              <span style={{ 
-                color: '#f85149', 
-                border: '1px solid #f85149', 
-                padding: '2px 8px', 
-                borderRadius: '10px', 
-                fontSize: '0.7rem', 
-                fontWeight: 'bold',
-                textTransform: 'uppercase'
-              }}>
-                Admin
-              </span>
-            )}
-            
-            <button onClick={() => { localStorage.clear(); window.location.href='/login'; }} style={{ background: 'transparent', border: '1px solid #30363d', color: 'white', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}>
-              Quitter
-            </button>
-          </div>
+          <>
+            <div className="nav-user-info">
+              <span>{user.username}</span>
+              {user.role === 'admin' && <span className="nav-admin-badge">Admin</span>}
+            </div>
+            <button onClick={handleLogout} className="logout-btn">Quitter</button>
+          </>
         ) : (
-          <a href="/login" style={{ color: '#58a6ff', textDecoration: 'none' }}>Connexion</a>
+          <Link to="/login" style={{color: '#58a6ff', textDecoration: 'none', fontSize: '0.9rem'}}>Connexion</Link>
         )}
       </div>
     </nav>
