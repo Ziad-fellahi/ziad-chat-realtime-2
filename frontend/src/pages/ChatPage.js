@@ -38,7 +38,7 @@ function ChatPage() {
   }, [navigate]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
 
   const send = (e) => {
@@ -64,12 +64,9 @@ function ChatPage() {
               <div key={i} className={`msg-group ${isMine ? 'mine' : 'theirs'}`}>
                 <div className="user-avatar-circle">{initial}</div>
                 <div className="bubble-container">
-                  <div className="msg-info">
-                    <span style={{ fontWeight: '600', color: isMine ? '#2f81f7' : '#8b949e' }}>
-                      {isMine ? 'Vous' : m.user}
-                    </span>
-                    <span>•</span>
-                    <span>{displayTime}</span>
+                  <div className="msg-info-top">
+                    <span>{isMine ? 'Moi' : m.user}</span>
+                    <span style={{opacity: 0.5}}>• {displayTime}</span>
                   </div>
                   <div className="bubble">{m.text}</div>
                 </div>
@@ -84,7 +81,7 @@ function ChatPage() {
             className="chat-input"
             value={message} 
             onChange={(e) => setMessage(e.target.value)} 
-            placeholder="Écrire un message..." 
+            placeholder="Écris ton message ici..." 
           />
           <button type="submit" className="send-btn">Envoyer</button>
         </form>
