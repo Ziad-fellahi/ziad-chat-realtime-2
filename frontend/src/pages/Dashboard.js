@@ -41,8 +41,7 @@ function Dashboard() {
   };
 
   const fetchMessages = () => {
-    fetch('http://46.224.42.239:5000/chat/messages?limit=200')
-      .then((res) => {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/chat/messages?limit=200`)      .then((res) => {
         if (!res.ok) throw new Error('Erreur lors du chargement des messages');
         return res.json();
       })

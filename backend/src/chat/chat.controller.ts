@@ -6,17 +6,16 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @Get('messages')
-  async getMessages(@Query('limit') limit = '200') {
-    const parsed = parseInt(limit, 10);
-    const safeLimit = Number.isNaN(parsed) ? 200 : Math.min(Math.max(parsed, 1), 1000);
-    const messages = await this.chatService.getRecentMessages(safeLimit);
+  async getMessages() {
+    // On utilise la fonction qui existe vraiment dans ton service
+    const messages = await this.chatService.getAllMessages();
 
     return {
       messages: messages.map((msg) => ({
         _id: String(msg._id),
         user: msg.user,
         text: msg.text,
-        createdAt: msg.createdAt ? msg.createdAt.toISOString() : null,
+        createdAt: msg.createdAt ? msg.createdAt.toISOString() : new Date().toISOString(),
       })),
     };
   }
