@@ -1,65 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import '../styles/Navbar.css';
 
 function Navbar() {
-  const [userName, setUserName] = useState("");
+  const [name, setName] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkToken = () => {
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        setUserName("");
-        return;
-      }
-
+    const token = localStorage.getItem('token');
+    if (token && token.split('.').length === 3) {
       try {
-        const parts = token.split('.');
-        if (parts.length === 3) {
-          // Décodage sécurisé de la partie Payload (index 1)
-          const payload = JSON.parse(window.atob(parts[1]));
-          setUserName(payload.username || "Utilisateur");
-        } else {
-          throw new Error("Format token invalide");
-        }
-      } catch (e) {
-        console.error("Erreur décodage Navbar:", e.message);
-        localStorage.removeItem('token'); // Nettoyage automatique
-        setUserName("");
-      }
-    };
-
-    checkToken();
-    // On écoute aussi les changements de localStorage pour mettre à jour en direct
-    window.addEventListener('storage', checkToken);
-    return () => window.removeEventListener('storage', checkToken);
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setName(payload.username);
+      } catch (e) { localStorage.removeItem('token'); }
+    }
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setUserName("");
-    navigate('/login');
-  };
-
   return (
-    <nav className="navbar-container">
-      <div className="navbar-logo">
-        <Link to="/">GovoStage</Link>
-      </div>
-      <div className="navbar-links">
-        {userName ? (
-          <>
-            <span className="user-welcome">Salut, <strong>{userName}</strong></span>
-            <button onClick={handleLogout} className="logout-btn">Déconnexion</button>
-          </>
-        ) : (
-          <Link to="/login" className="login-link">Connexion</Link>
-        )}
+    <nav style={{ padding: '10px', background: '#1e2124', color: 'white', display: 'flex', justifyContent: 'space-between' }}>
+      <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>GovoStage</Link>
+      <div>
+        {name ? <span>Salut, {name}</span> : <Link to="/login" style={{ color: 'white' }}>Connexion</Link>}
       </div>
     </nav>
   );
 }
-
 export default Navbar;
