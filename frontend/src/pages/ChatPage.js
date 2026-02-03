@@ -1,28 +1,72 @@
-// ... dans ton return
-<div className="chat-container">
-  <div className="messages-wrapper">
-    {messages.map((m, i) => (
-      <div key={i} className={`message-row ${m.user === currentUser ? 'me' : 'others'}`}>
-        <span className="user-name">{m.user}</span>
-        <div className="bubble">
-          {m.text}
-        </div>
-      </div>
-    ))}
-    <div ref={messagesEndRef} /> {/* Pour le scroll auto */}
-  </div>
+import React, { useState, useEffect, useRef } from 'react';
+import io from 'socket.io-client';
+import './Chat.css'; // Vérifie bien que le fichier est dans le même dossier !
 
-  <form className="input-area" onSubmit={sendMessage}>
-    <input 
-      className="chat-input"
-      value={input}
-      onChange={(e) => setInput(e.target.value)}
-      placeholder="Écris ton message ici..."
-    />
-    <button className="send-btn" type="submit">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-      </svg>
-    </button>
-  </form>
-</div>
+const socket = io(process.env.REACT_APP_BACKEND_URL);
+
+function Chat({ currentUser }) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    // Charger l'historique
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/chat/messages`, {
+        headers: { "ngrok-skip-browser-warning": "69420" }
+    })
+    .then(res => res.json())
+    .then(data => setMessages(data.messages || []));
+
+    socket.on('message', (msg) => {
+      setMessages((prev) => [...prev, msg]);
+    });
+
+    return () => socket.off('message');
+  }, []);
+
+  useEffect(scrollToBottom, [messages]);
+
+  const sendMessage = (e) => {
+    e.preventDefault();
+    if (input.trim()) {
+      const msgData = { user: currentUser || 'Anonyme', text: input };
+      socket.emit('message', msgData);
+      setInput('');
+    }
+  };
+
+  return (
+    <div className="chat-page">
+      <div className="chat-header">
+        <span>Serveur Live : 🟢 Connecté</span>
+        <small>{messages.length} messages</small>
+      </div>
+
+      <div className="messages-container">
+        {messages.map((m, i) => (
+          <div key={i} className={`message-wrapper ${m.user === currentUser ? 'me' : 'others'}`}>
+            <span className="user-tag">{m.user}</span>
+            <div className="message-bubble">{m.text}</div>
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+
+      <form className="chat-input-area" onSubmit={sendMessage}>
+        <input 
+          className="chat-input-field"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Tapez un message..."
+        />
+        <button type="submit" className="send-button">Envoyer</button>
+      </form>
+    </div>
+  );
+}
+
+export default Chat;
