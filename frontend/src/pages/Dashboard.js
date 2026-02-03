@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Chart from 'chart.js/auto';
-import '../Dashboard.css';
+import './Dashboard.css';
 
 function Dashboard() {
   const navigate = useNavigate();
