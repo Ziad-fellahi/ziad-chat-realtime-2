@@ -1,7 +1,7 @@
 name: Deploy GovoStage
 on:
   push:
-    branches: [ main ] # Change en 'main' si c'est le nom de ta branche sur GitHub
+    branches: [ main ] # On utilise 'main' qui est ta branche actuelle
 
 jobs:
   deploy:
@@ -10,13 +10,16 @@ jobs:
       - name: Connexion SSH et déploiement
         uses: appleboy/ssh-action@master
         with:
-          host: 46.224.42.239
+          host: 46.224.42.239 # TON IP de serveur Hetzner
           username: root
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             cd /var/www/govostage
-            git pull origin master
+            # On force la branche main pour éviter les erreurs de merge
+            git fetch origin
+            git reset --hard origin/main 
             cd backend
             npm install
             npm run build
-            pm2 reload govostage-backend
+            # On utilise restart pour être sûr que la nouvelle route /messages est là
+            pm2 restart govostage-backend

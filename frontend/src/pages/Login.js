@@ -12,7 +12,7 @@ export default function Login() {
     e.preventDefault();
     setError('');
     try {
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://46.224.42.239:5000';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://uncolourable-frederic-domesticative.ngrok-free.dev';
 
 const res = await fetch(`${BACKEND_URL}/auth/login`, {
   

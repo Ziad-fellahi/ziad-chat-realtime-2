@@ -30,7 +30,8 @@ function ChatPage() {
       setUserName('Utilisateur');
     }
 
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://46.224.42.239:5000';
+    // Remplace l'ancienne IP par ton lien Ngrok
+const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://uncolourable-frederic-domesticative.ngrok-free.dev';
     
     if (!socket) {
       socket = io(backendUrl, { 
