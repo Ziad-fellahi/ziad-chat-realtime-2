@@ -33,11 +33,10 @@ function ChatPage() {
       });
     }
 
-    socket.on('message_history', (history) => setChat(history));
-    socket.on('msg_to_client', (payload) => setChat(prev => [...prev, payload]));
+    socket.on('message_history', (h) => setChat(h));
+    socket.on('msg_to_client', (msg) => setChat(prev => [...prev, msg]));
 
     return () => {
-      socket.off('message_history');
       socket.off('msg_to_client');
     };
   }, [navigate]);
@@ -46,17 +45,14 @@ function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
 
-  const handleSend = (e) => {
+  const send = (e) => {
     e.preventDefault();
     if (message.trim()) {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      
-      // On envoie le texte, le user, l'heure et le rôle pour le badge
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       socket.emit('msg_to_server', { 
         user: userName, 
         text: message, 
-        time: timeStr,
+        time: time,
         role: userRole 
       });
       setMessage('');
@@ -69,28 +65,17 @@ function ChatPage() {
         <div className="chat-messages-area">
           {chat.map((m, i) => {
             const isMine = m.user === userName;
-            const initials = m.user ? m.user.charAt(0).toUpperCase() : '?';
-            
             return (
               <div key={i} className={`msg-group ${isMine ? 'mine' : 'theirs'}`}>
-                <div className="user-avatar-circle">{initials}</div>
+                <div className="user-avatar-circle">{m.user?.charAt(0).toUpperCase()}</div>
                 <div className="bubble-container">
-                  <div className="msg-header">
-                    <span className="username-label">{m.user}</span>
-                    {m.role === 'admin' && (
-                      <span style={{ 
-                        color: '#f85149', 
-                        fontSize: '0.6rem', 
-                        border: '1px solid #f85149', 
-                        padding: '0 4px', 
-                        borderRadius: '4px',
-                        fontWeight: 'bold'
-                      }}>ADMIN</span>
-                    )}
+                  <div className="username-label">
+                    {m.user}
+                    {m.role === 'admin' && <span className="admin-badge">Admin</span>}
                   </div>
                   <div className="bubble">
-                    <span className="msg-text">{m.text}</span>
-                    <span className="msg-time">{m.time || '--:--'}</span>
+                    <span>{m.text}</span>
+                    <span className="msg-time">{m.time || '00:00'}</span>
                   </div>
                 </div>
               </div>
@@ -99,12 +84,12 @@ function ChatPage() {
           <div ref={messagesEndRef} />
         </div>
         
-        <form onSubmit={handleSend} className="chat-footer-form">
+        <form onSubmit={send} className="chat-footer-form">
           <input 
             className="chat-input" 
             value={message} 
             onChange={(e) => setMessage(e.target.value)} 
-            placeholder="Tapez votre message..."
+            placeholder="Écrire un message..."
           />
           <button type="submit" className="send-btn">Envoyer</button>
         </form>
