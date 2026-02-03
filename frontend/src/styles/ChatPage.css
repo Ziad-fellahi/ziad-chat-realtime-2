@@ -1,39 +1,33 @@
-/* Désactive le scroll de la page entière */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  overflow: hidden; 
-  background-color: #0d1117;
-}
-
+/* 1. Global : On ne bloque plus le body pour laisser les autres pages scroller */
 .chat-page-wrapper {
-  height: 100vh;
+  height: calc(100vh - 60px); /* Hauteur restante sous la navbar */
   width: 100vw;
   display: flex;
   justify-content: center;
-  /* On aligne en haut pour éviter qu'il ne descende trop bas */
-  align-items: flex-start; 
-  /* On ajuste l'espace sous la Navbar (60px nav + 20px marge) */
-  padding-top: 80px; 
+  align-items: flex-start; /* Aligne en haut pour éviter de tomber trop bas */
+  padding-top: 30px;      /* Marge entre la navbar et le chat */
+  background-color: #0b0e11;
   box-sizing: border-box;
+  position: fixed;        /* Fixe la page de chat pour qu'elle ne bouge pas */
+  top: 60px;
+  left: 0;
 }
 
+/* 2. Le Container de 850px */
 .chat-main-container {
   width: 95%;
   max-width: 850px;
-  /* On définit une hauteur qui s'adapte à l'écran sans dépasser */
-  height: calc(100vh - 120px); 
-  background: #161b22;
+  height: 85%;            /* Hauteur équilibrée */
+  background: #151921;
   border: 1px solid #30363d;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
 }
 
-/* Zone des messages */
+/* 3. Zone de messages (Scroll interne) */
 .chat-messages-area {
   flex: 1;
   overflow-y: auto;
@@ -46,7 +40,7 @@ html, body {
 
 .msg-group {
   display: flex;
-  align-items: flex-start; /* Aligné en haut de la bulle */
+  align-items: flex-start;
   gap: 10px;
   max-width: 85%;
 }
@@ -56,10 +50,10 @@ html, body {
   flex-direction: row-reverse;
 }
 
-/* Avatar sans ombre */
+/* 4. Avatar (Zéro Ombre) */
 .user-avatar-circle {
-  width: 32px;
-  height: 32px;
+  width: 35px;
+  height: 35px;
   background: #30363d;
   color: #58a6ff;
   border-radius: 50%;
@@ -68,8 +62,8 @@ html, body {
   justify-content: center;
   font-weight: bold;
   flex-shrink: 0;
-  font-size: 0.75rem;
   border: 1px solid #3b424b;
+  box-shadow: none !important;
 }
 
 .bubble-container {
@@ -84,12 +78,18 @@ html, body {
   color: #e6edf3;
   display: flex;
   align-items: flex-end;
-  gap: 10px;
+  gap: 12px;
   word-break: break-word;
 }
 
-.mine .bubble { background: #238636; }
-.theirs .bubble { background: #21262d; border: 1px solid #30363d; }
+.mine .bubble {
+  background: #238636;
+}
+
+.theirs .bubble {
+  background: #21262d;
+  border: 1px solid #30363d;
+}
 
 .msg-time {
   font-size: 0.65rem;
@@ -97,7 +97,25 @@ html, body {
   white-space: nowrap;
 }
 
-/* Barre d'envoi fixe en bas du container */
+/* 5. Badge Admin (Chat & Nav) */
+.admin-badge, .nav-admin-badge {
+  color: #f85149;
+  font-size: 0.65rem;
+  font-weight: bold;
+  border: 1px solid #f85149;
+  padding: 1px 6px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  background: rgba(248, 81, 73, 0.1);
+}
+
+.nav-admin-badge {
+  margin-left: 10px;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+}
+
+/* 6. Footer / Input */
 .chat-footer-form {
   padding: 15px 20px;
   background: #161b22;
@@ -111,9 +129,13 @@ html, body {
   background: #0d1117;
   border: 1px solid #30363d;
   border-radius: 6px;
-  padding: 10px 15px;
+  padding: 12px;
   color: white;
   outline: none;
+}
+
+.chat-input:focus {
+  border-color: #58a6ff;
 }
 
 .send-btn {
@@ -123,5 +145,5 @@ html, body {
   padding: 0 20px;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: bold;
 }
