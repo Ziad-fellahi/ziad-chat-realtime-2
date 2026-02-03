@@ -76,5 +76,18 @@ function Navbar() {
     </nav>
   );
 }
-
+// src/components/Navbar.js
+<nav className="navbar">
+  <div className="nav-logo">GOVOSTAGE</div>
+  
+  <div className="nav-right">
+    {user && (
+      <div className="nav-user-box">
+        <span className="nav-username">{user.username}</span>
+        {user.role === 'admin' && <span className="nav-admin-badge">Admin</span>}
+        <button onClick={handleLogout} className="logout-btn">Quitter</button>
+      </div>
+    )}
+  </div>
+</nav>
 export default Navbar;
