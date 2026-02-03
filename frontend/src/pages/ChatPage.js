@@ -5,6 +5,10 @@ import '../styles/ChatPage.css';
 
 let socket;
 
+
+
+
+
 function ChatPage() {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);

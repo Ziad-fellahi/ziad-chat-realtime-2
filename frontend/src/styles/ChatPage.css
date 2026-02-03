@@ -1,10 +1,47 @@
 /* Désactive le scroll de la page entière */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  overflow: hidden; 
+/* On ne touche plus au body global pour que les autres pages puissent descendre */
+
+.chat-page-wrapper {
+  /* On force le wrapper à prendre toute la hauteur de l'écran visible */
+  height: calc(100vh - 70px); /* 100% de la hauteur moins la navbar */
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: #0b0e11;
+  position: fixed; /* On fixe uniquement CETTE page */
+  top: 70px;
+  left: 0;
+  overflow: hidden; /* Empêche le scroll de la page de chat uniquement */
+}
+
+.chat-main-container {
+  width: 95%;
+  max-width: 850px;
+  height: 85%; /* Il prend 85% du wrapper */
+  background: #151921;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* On retire l'ombre de l'avatar comme demandé */
+.user-avatar-circle {
+  width: 35px;
+  height: 35px;
+  background: #30363d;
+  color: #58a6ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+  box-shadow: none !important; /* Force la suppression de l'ombre */
+  border: 1px solid #3b424b;
 }
 
 .chat-page-wrapper {
@@ -112,4 +149,40 @@ html, body {
   padding: 10px;
   color: white;
   outline: none;
+}
+
+
+
+
+
+
+/* --- Suppression de l'ombre sur l'avatar --- */
+.user-avatar-circle {
+  width: 35px;
+  height: 35px;
+  background: #30363d;
+  color: #58a6ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+
+  /* box-shadow supprimé ici */
+  border: 1px solid #30363d; 
+}
+
+/* --- Style du Badge Admin pour la Navbar --- */
+.nav-admin-badge {
+  background-color: rgba(248, 81, 73, 0.1);
+  color: #f85149;
+  border: 1px solid #f85149;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-left: 10px;
+  letter-spacing: 0.5px;
 }
