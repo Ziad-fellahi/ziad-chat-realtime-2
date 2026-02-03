@@ -1,10 +1,11 @@
-/* Empêche le scroll de la page pour un effet "App" */
+/* Désactivation du scroll global pour l'effet Application */
 html, body {
   margin: 0;
   padding: 0;
   height: 100vh;
   overflow: hidden;
   background-color: #0d1117;
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
 }
 
 .chat-page-wrapper {
@@ -13,42 +14,39 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 90px; /* Navbar (70px) + Marge (20px) */
+  padding-top: 85px; /* Calé sous ta navbar de 70px */
   box-sizing: border-box;
 }
 
 .chat-main-container {
   width: 95%;
   max-width: 850px;
-  height: 82vh; /* Hauteur fixe pour éviter de sortir de l'écran */
+  height: calc(100vh - 110px);
   background: #161b22;
   border: 1px solid #30363d;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
   overflow: hidden;
 }
 
-/* Zone des messages avec scroll interne */
+/* Zone des messages */
 .chat-messages-area {
   flex: 1;
   overflow-y: auto;
-  padding: 24px;
+  padding: 20px 30px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  background-color: #0d1117;
+  gap: 12px;
+  background: #0d1117;
 }
 
-/* Custom Scrollbar pour le look Discord */
-.chat-messages-area::-webkit-scrollbar { width: 6px; }
-.chat-messages-area::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
-
+/* Groupes de messages */
 .msg-group {
   display: flex;
   gap: 12px;
-  max-width: 85%;
+  max-width: 75%;
 }
 
 .msg-group.mine {
@@ -57,8 +55,8 @@ html, body {
 }
 
 .user-avatar-circle {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   background: #30363d;
   color: #58a6ff;
   border-radius: 50%;
@@ -66,15 +64,15 @@ html, body {
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   flex-shrink: 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #444c56;
 }
 
 .bubble-container {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
 }
 
 .msg-header {
@@ -82,18 +80,23 @@ html, body {
   align-items: center;
   gap: 8px;
   font-size: 0.75rem;
+  color: #8b949e;
+  margin-bottom: 2px;
 }
 
-.username-label { color: #8b949e; font-weight: 600; }
-.timestamp { color: #484f58; font-size: 0.7rem; }
+.mine .msg-header {
+  flex-direction: row-reverse;
+}
 
 .bubble {
-  padding: 12px 16px;
+  padding: 10px 16px;
   border-radius: 12px;
   font-size: 0.95rem;
-  line-height: 1.4;
-  color: #e6edf3;
+  color: #f0f6fc;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 80px;
 }
 
 .mine .bubble {
@@ -107,9 +110,22 @@ html, body {
   border-bottom-left-radius: 2px;
 }
 
-/* Style de l'Input en bas */
+/* L'HEURE : Intégrée en bas à droite de la bulle */
+.msg-time {
+  font-size: 0.65rem;
+  align-self: flex-end;
+  margin-top: 5px;
+  opacity: 0.7;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.theirs .msg-time {
+  color: #8b949e;
+}
+
+/* Pied de page / Input */
 .chat-footer-form {
-  padding: 20px;
+  padding: 18px 25px;
   background: #161b22;
   border-top: 1px solid #30363d;
   display: flex;
@@ -121,11 +137,10 @@ html, body {
   background: #0d1117;
   border: 1px solid #30363d;
   border-radius: 8px;
-  padding: 12px 18px;
+  padding: 12px 16px;
   color: white;
   outline: none;
   font-size: 0.95rem;
-  transition: border-color 0.2s;
 }
 
 .chat-input:focus {
@@ -137,10 +152,12 @@ html, body {
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 0 20px;
+  padding: 0 25px;
   font-weight: 700;
   cursor: pointer;
   transition: background 0.2s;
 }
 
-.send-btn:hover { background: #4752c4; }
+.send-btn:hover {
+  background: #4752c4;
+} 
