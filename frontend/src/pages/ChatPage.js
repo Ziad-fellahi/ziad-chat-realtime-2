@@ -32,8 +32,8 @@ function ChatPage() {
     socket.on('msg_to_client', (p) => setChat(prev => [...prev, p]));
 
     return () => { 
-        socket.off('message_history');
-        socket.off('msg_to_client'); 
+      socket.off('message_history');
+      socket.off('msg_to_client'); 
     };
   }, [navigate]);
 
@@ -45,13 +45,8 @@ function ChatPage() {
     e.preventDefault();
     if (message.trim()) {
       const now = new Date();
-      const timeStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
-      
-      socket.emit('msg_to_server', { 
-        user: userName, 
-        text: message, 
-        time: timeStr 
-      });
+      const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      socket.emit('msg_to_server', { user: userName, text: message, time: time });
       setMessage('');
     }
   };
@@ -63,13 +58,20 @@ function ChatPage() {
           {chat.map((m, i) => {
             const isMine = m.user === userName;
             const initial = m.user ? m.user.charAt(0).toUpperCase() : '?';
+            const displayTime = m.time || (m.createdAt ? new Date(m.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '');
+
             return (
               <div key={i} className={`msg-group ${isMine ? 'mine' : 'theirs'}`}>
                 <div className="user-avatar-circle">{initial}</div>
                 <div className="bubble-container">
-                  {!isMine && <span style={{fontSize: '0.7rem', color: '#8b949e', marginBottom: '2px', marginLeft: '4px'}}>{m.user}</span>}
+                  <div className="msg-info">
+                    <span style={{ fontWeight: '600', color: isMine ? '#2f81f7' : '#8b949e' }}>
+                      {isMine ? 'Vous' : m.user}
+                    </span>
+                    <span>•</span>
+                    <span>{displayTime}</span>
+                  </div>
                   <div className="bubble">{m.text}</div>
-                  <span className="msg-time">{m.time || '--:--'}</span>
                 </div>
               </div>
             );
@@ -82,9 +84,9 @@ function ChatPage() {
             className="chat-input"
             value={message} 
             onChange={(e) => setMessage(e.target.value)} 
-            placeholder="Écris un message..." 
+            placeholder="Écrire un message..." 
           />
-          <button type="submit" className="send-btn">➤</button>
+          <button type="submit" className="send-btn">Envoyer</button>
         </form>
       </div>
     </div>
