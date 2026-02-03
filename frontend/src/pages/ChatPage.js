@@ -5,10 +5,6 @@ import '../styles/ChatPage.css';
 
 let socket;
 
-
-
-
-
 function ChatPage() {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
@@ -31,7 +27,7 @@ function ChatPage() {
     }
 
     socket.on('message_history', (h) => setChat(h));
-    socket.on('msg_to_client', (p) => setChat(prev => [...prev, p]));
+    socket.on('msg_to_client', (msg) => setChat(prev => [...prev, msg]));
 
     return () => { socket.off('msg_to_client'); };
   }, [navigate]);
@@ -43,8 +39,9 @@ function ChatPage() {
   const send = (e) => {
     e.preventDefault();
     if (message.trim()) {
-      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      socket.emit('msg_to_server', { user: userName, text: message, time: time });
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      socket.emit('msg_to_server', { user: userName, text: message, time: timeStr });
       setMessage('');
     }
   };
@@ -59,23 +56,26 @@ function ChatPage() {
               <div key={i} className={`msg-group ${isMine ? 'mine' : 'theirs'}`}>
                 <div className="user-avatar-circle">{m.user?.charAt(0).toUpperCase()}</div>
                 <div className="bubble-container">
-                  <div style={{ marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '0.75rem', color: '#8b949e' }}>{m.user}</span>
-                    {m.role === 'admin' && <span className="admin-badge">Admin</span>}
+                  <div className="msg-header">
+                    <span className="username-label">{m.user}</span>
+                    <span className="timestamp">{m.time}</span>
                   </div>
-                  <div className="bubble">
-                    {m.text}
-                    <span className="msg-time">{m.time || '--:--'}</span>
-                  </div>
+                  <div className="bubble">{m.text}</div>
                 </div>
               </div>
             );
           })}
           <div ref={messagesEndRef} />
         </div>
+        
         <form onSubmit={send} className="chat-footer-form">
-          <input className="chat-input" value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Message..." />
-          <button type="submit" style={{background: '#238636', color: 'white', border: 'none', padding: '0 15px', borderRadius: '4px', cursor: 'pointer'}}>Envoyer</button>
+          <input 
+            className="chat-input" 
+            value={message} 
+            onChange={(e) => setMessage(e.target.value)} 
+            placeholder="Écrire un message..."
+          />
+          <button type="submit" className="send-btn">Envoyer</button>
         </form>
       </div>
     </div>
