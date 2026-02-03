@@ -1,62 +1,126 @@
 import React, { useState, useEffect, useRef } from 'react';
-import io from 'socket.io-client';
-import './ChatPage.css'; // IMPORTANT : un seul point si le CSS est au même endroit
+import { useNavigate } from 'react-router-dom';
+import { io } from 'socket.io-client';
+import '../styles/ChatPage.css';
 
-const socket = io(process.env.REACT_APP_BACKEND_URL);
+// On place le socket en dehors pour éviter les reconnexions au re-render
+let socket;
 
-function ChatPage({ currentUser }) {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
+function ChatPage() {
+  const [message, setMessage] = useState('');
+  const [chat, setChat] = useState([]);
+  const [userName, setUserName] = useState('');
+  const [typingUser, setTypingUser] = useState(null);
   const messagesEndRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Charger l'historique
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/chat/messages`, {
-      headers: { "ngrok-skip-browser-warning": "true" }
-    })
-    .then(res => res.json())
-    .then(data => setMessages(data.messages || []));
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+    
+    // Décodage du username
+    try {
+      const payload = token.split('.')[1];
+      const decoded = JSON.parse(atob(payload));
+      setUserName(decoded.username);
+    } catch (e) {
+      setUserName('Utilisateur');
+    }
 
-    socket.on('message', (msg) => {
-      setMessages((prev) => [...prev, msg]);
+    // URL Dynamique
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://votre-ngrok.ngrok-free.dev';
+    
+    if (!socket) {
+      socket = io(backendUrl, { 
+        transports: ['websocket'],
+        extraHeaders: { "ngrok-skip-browser-warning": "true" }
+      });
+    }
+
+    socket.on('message_history', (history) => setChat(history));
+    socket.on('msg_to_client', (payload) => {
+      setChat(prev => [...prev, payload]);
+      setTypingUser(null);
     });
 
-    return () => socket.off('message');
-  }, []);
+    socket.on('typing_to_client', (data) => {
+      if (data.isTyping && data.user !== userName) {
+        setTypingUser(data.user);
+      } else {
+        setTypingUser(null);
+      }
+    });
+
+    return () => {
+      socket.off('msg_to_client');
+      socket.off('typing_to_client');
+    };
+  }, [navigate, userName]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [chat, typingUser]);
 
-  const handleSend = (e) => {
+  const handleInputChange = (e) => {
+    setMessage(e.target.value);
+    if (socket) {
+      socket.emit('typing_start', { user: userName });
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = setTimeout(() => {
+        socket.emit('typing_stop', { user: userName });
+      }, 2000);
+    }
+  };
+
+  const sendMessage = (e) => {
     e.preventDefault();
-    if (input.trim()) {
-      socket.emit('message', { user: currentUser || 'Anonyme', text: input });
-      setInput('');
+    if (message.trim() && socket) {
+      socket.emit('msg_to_server', { user: userName, text: message });
+      socket.emit('typing_stop', { user: userName });
+      setMessage('');
     }
   };
 
   return (
-    <div className="chat-page-container">
-      <div className="messages-area">
-        {messages.map((m, i) => (
-          <div key={i} className={`msg-group ${m.user === currentUser ? 'me' : 'others'}`}>
-            <span className="user-label">{m.user}</span>
-            <div className="msg-bubble">{m.text}</div>
+    <div className="chat-page-wrapper">
+      <div className="chat-main-container">
+        <header className="chat-header-custom">
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div className="online-indicator" />
+            <span><strong>{userName}</strong> (Live)</span>
           </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
+          <button className="logout-button" onClick={() => { localStorage.removeItem('token'); navigate('/login'); }}>Quitter</button>
+        </header>
 
-      <form className="chat-footer" onSubmit={handleSend}>
-        <input 
-          className="chat-input"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Écrivez votre message..."
-        />
-        <button type="submit" className="send-btn">Envoyer</button>
-      </form>
+        <div className="chat-messages-area">
+          {chat.map((m, i) => (
+            <div key={i} className={`msg-group ${m.user === userName ? 'mine' : 'theirs'}`}>
+              {m.user !== userName && <div className="user-avatar">{m.user?.charAt(0)}</div>}
+              <div className="bubble">
+                {m.user !== userName && <div style={{ fontSize: '0.7rem', color: '#8b949e', marginBottom: '4px' }}>{m.user}</div>}
+                {m.text}
+              </div>
+            </div>
+          ))}
+          
+          {typingUser && (
+            <div className="typing-indicator">
+              <div className="dots"><span className="dot"></span><span className="dot"></span><span className="dot"></span></div>
+              <span>{typingUser} écrit...</span>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        <form onSubmit={sendMessage} className="chat-footer-form">
+          <input value={message} onChange={handleInputChange} placeholder="Message..." />
+          <button type="submit" className="send-icon-btn">➤</button>
+        </form>
+      </div>
     </div>
   );
 }
