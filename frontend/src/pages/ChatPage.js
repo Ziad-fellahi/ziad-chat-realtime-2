@@ -34,14 +34,7 @@ function ChatPage() {
     }
 
     socket.on('message_history', (h) => setChat(h));
-    
-    // Quand on reçoit un message, si l'heure manque, on la génère
-    socket.on('msg_to_client', (msg) => {
-      if (!msg.time) {
-        msg.time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      }
-      setChat(prev => [...prev, msg]);
-    });
+    socket.on('msg_to_client', (msg) => setChat(prev => [...prev, msg]));
 
     return () => { socket.off('msg_to_client'); };
   }, [navigate]);
@@ -72,8 +65,6 @@ function ChatPage() {
           {chat.map((m, i) => {
             const isMine = m.user === userName;
             const initials = m.user ? m.user.charAt(0).toUpperCase() : '?';
-            // Sécurité supplémentaire : si m.time est toujours vide ici
-            const displayTime = m.time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
             return (
               <div key={i} className={`msg-group ${isMine ? 'mine' : 'theirs'}`}>
@@ -84,8 +75,8 @@ function ChatPage() {
                     {m.role === 'admin' && <span className="admin-badge">Admin</span>}
                   </div>
                   <div className="bubble">
-                    <span className="msg-text">{m.text}</span>
-                    <span className="msg-time">{displayTime}</span>
+                    <span>{m.text}</span>
+                    <span className="msg-time">{m.time || '--:--'}</span>
                   </div>
                 </div>
               </div>
