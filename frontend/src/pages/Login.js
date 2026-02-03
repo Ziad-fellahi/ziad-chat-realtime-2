@@ -11,23 +11,40 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    
     try {
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://uncolourable-frederic-domesticative.ngrok-free.dev';
+      // URL de ton backend Ubuntu via Ngrok
+      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://uncolourable-frederic-domesticative.ngrok-free.dev';
 
-const res = await fetch(`${BACKEND_URL}/auth/login`, {
-  
+      const res = await fetch(`${BACKEND_URL}/auth/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true' // <--- INDISPENSABLE pour passer le tunnel Ngrok
+        },
         body: JSON.stringify({ username, password }),
       });
+
       if (!res.ok) throw new Error('Identifiants invalides');
+      
       const data = await res.json();
-      localStorage.setItem('token', data.access_token);
-      if (data.role) {
-        localStorage.setItem('role', data.role);
+
+      // --- CORRECTION MAJEURE : On utilise data.token (et pas access_token) ---
+      if (data.token) {
+        localStorage.setItem('token', data.token); // On enregistre le vrai jeton
+        
+        if (data.role) {
+          localStorage.setItem('role', data.role);
+        }
+        
+        // Une fois le jeton enregistré, on va vers l'accueil (Chat)
+        navigate('/'); 
+      } else {
+        throw new Error('Erreur serveur : Le jeton de connexion est manquant');
       }
-      navigate('/');
+
     } catch (err) {
+      console.error("Erreur login:", err);
       setError(err.message);
     }
   };
@@ -53,14 +70,67 @@ const res = await fetch(`${BACKEND_URL}/auth/login`, {
         background: 'rgba(30,32,34,0.82)',
         zIndex: 0
       }} />
-      <div className="login-container" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.25)', borderRadius: 16, background: '#23272a', color: '#fff', padding: '2.5rem 2rem', minWidth: 340, position: 'relative', zIndex: 1 }}>
-        <h2 style={{ color: '#fff', marginBottom: 24, fontWeight: 700, letterSpacing: 1, textShadow: '0 2px 8px rgba(0,0,0,0.18)' }}>Connexion</h2>
+      
+      <div className="login-container" style={{ 
+        boxShadow: '0 4px 24px rgba(0,0,0,0.25)', 
+        borderRadius: 16, 
+        background: '#23272a', 
+        color: '#fff', 
+        padding: '2.5rem 2rem', 
+        minWidth: 340, 
+        position: 'relative', 
+        zIndex: 1 
+      }}>
+        <h2 style={{ 
+          color: '#fff', 
+          marginBottom: 24, 
+          fontWeight: 700, 
+          letterSpacing: 1, 
+          textShadow: '0 2px 8px rgba(0,0,0,0.18)' 
+        }}>Connexion</h2>
+        
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          <input type="text" placeholder="Nom d'utilisateur" value={username} onChange={e => setUsername(e.target.value)} required style={{ borderRadius: 8, border: '1px solid #444', padding: '0.9rem', fontSize: 16, background: '#36393f', color: '#fff' }} />
-          <input type="password" placeholder="Mot de passe" value={password} onChange={e => setPassword(e.target.value)} required style={{ borderRadius: 8, border: '1px solid #444', padding: '0.9rem', fontSize: 16, background: '#36393f', color: '#fff' }} />
-          <button type="submit" style={{ background: '#5865f2', color: '#fff', border: 'none', borderRadius: 8, padding: '0.9rem', fontWeight: 700, fontSize: 17, marginTop: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.10)', cursor: 'pointer', transition: 'background 0.2s' }}>Se connecter</button>
+          <input 
+            type="text" 
+            placeholder="Nom d'utilisateur" 
+            value={username} 
+            onChange={e => setUsername(e.target.value)} 
+            required 
+            style={{ borderRadius: 8, border: '1px solid #444', padding: '0.9rem', fontSize: 16, background: '#36393f', color: '#fff' }} 
+          />
+          <input 
+            type="password" 
+            placeholder="Mot de passe" 
+            value={password} 
+            onChange={e => setPassword(e.target.value)} 
+            required 
+            style={{ borderRadius: 8, border: '1px solid #444', padding: '0.9rem', fontSize: 16, background: '#36393f', color: '#fff' }} 
+          />
+          <button 
+            type="submit" 
+            style={{ 
+              background: '#5865f2', 
+              color: '#fff', 
+              border: 'none', 
+              borderRadius: 8, 
+              padding: '0.9rem', 
+              fontWeight: 700, 
+              fontSize: 17, 
+              marginTop: 8, 
+              boxShadow: '0 2px 8px rgba(0,0,0,0.10)', 
+              cursor: 'pointer', 
+              transition: 'background 0.2s' 
+            }}
+          >
+            Se connecter
+          </button>
         </form>
-        {error && <div className="error" style={{ color: '#d32f2f', marginTop: 18, textAlign: 'center', fontWeight: 500 }}>{error}</div>}
+        
+        {error && (
+          <div className="error" style={{ color: '#ff4747', marginTop: 18, textAlign: 'center', fontWeight: 500 }}>
+            {error}
+          </div>
+        )}
       </div>
     </div>
   );
