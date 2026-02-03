@@ -38,7 +38,7 @@ function ChatPage() {
   }, [navigate]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
   }, [chat]);
 
   const send = (e) => {
@@ -62,12 +62,12 @@ function ChatPage() {
         <div className="chat-messages-area">
           {chat.map((m, i) => {
             const isMine = m.user === userName;
-            const initial = m.user ? m.user.charAt(0) : '?';
+            const initial = m.user ? m.user.charAt(0).toUpperCase() : '?';
             return (
               <div key={i} className={`msg-group ${isMine ? 'mine' : 'theirs'}`}>
                 <div className="user-avatar-circle">{initial}</div>
                 <div className="bubble-container">
-                  {!isMine && <span style={{fontSize: '0.7rem', color: '#38bdf8', marginBottom: '2px', marginLeft: '5px'}}>{m.user}</span>}
+                  {!isMine && <span style={{fontSize: '0.7rem', color: '#8b949e', marginBottom: '2px', marginLeft: '4px'}}>{m.user}</span>}
                   <div className="bubble">{m.text}</div>
                   <span className="msg-time">{m.time || '--:--'}</span>
                 </div>
@@ -82,11 +82,9 @@ function ChatPage() {
             className="chat-input"
             value={message} 
             onChange={(e) => setMessage(e.target.value)} 
-            placeholder="Écris ton message ici..." 
+            placeholder="Écris un message..." 
           />
-          <button type="submit" style={{background: '#38bdf8', color: '#000', border: 'none', borderRadius: '8px', padding: '0 20px', cursor: 'pointer', fontWeight: 'bold'}}>
-            Envoyer
-          </button>
+          <button type="submit" className="send-btn">➤</button>
         </form>
       </div>
     </div>
