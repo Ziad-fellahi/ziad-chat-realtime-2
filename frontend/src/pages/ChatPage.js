@@ -36,9 +36,7 @@ function ChatPage() {
     socket.on('message_history', (h) => setChat(h));
     socket.on('msg_to_client', (msg) => setChat(prev => [...prev, msg]));
 
-    return () => {
-      socket.off('msg_to_client');
-    };
+    return () => { socket.off('msg_to_client'); };
   }, [navigate]);
 
   useEffect(() => {
@@ -48,11 +46,13 @@ function ChatPage() {
   const send = (e) => {
     e.preventDefault();
     if (message.trim()) {
-      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
       socket.emit('msg_to_server', { 
         user: userName, 
         text: message, 
-        time: time,
+        time: timeStr, // Envoi de l'heure au serveur
         role: userRole 
       });
       setMessage('');
@@ -65,6 +65,12 @@ function ChatPage() {
         <div className="chat-messages-area">
           {chat.map((m, i) => {
             const isMine = m.user === userName;
+            
+            // LOGIQUE DE L'HEURE : Sécurité si m.time est vide
+            const displayTime = m.time || 
+              (m.createdAt ? new Date(m.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 
+              new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
+
             return (
               <div key={i} className={`msg-group ${isMine ? 'mine' : 'theirs'}`}>
                 <div className="user-avatar-circle">{m.user?.charAt(0).toUpperCase()}</div>
@@ -74,8 +80,8 @@ function ChatPage() {
                     {m.role === 'admin' && <span className="admin-badge">Admin</span>}
                   </div>
                   <div className="bubble">
-                    <span>{m.text}</span>
-                    <span className="msg-time">{m.time || '00:00'}</span>
+                    <span className="msg-text">{m.text}</span>
+                    <span className="msg-time">{displayTime}</span>
                   </div>
                 </div>
               </div>
