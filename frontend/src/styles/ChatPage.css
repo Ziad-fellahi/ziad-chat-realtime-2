@@ -30,6 +30,11 @@
   overflow: hidden;
 }
 
+/* Dans le CSS qui gère la page de chat */
+.chat-container {
+  padding-top: 90px;
+}
+
 .chat-header-custom {
   padding: 18px 25px;
   background: #2f3136;

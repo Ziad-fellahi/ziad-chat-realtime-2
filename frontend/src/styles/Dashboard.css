@@ -12,9 +12,13 @@
 .dashboard-container {
   background-color: var(--bg-dark);
   min-height: 100vh;
-  padding: 2rem;
+  /* AJOUTE ÇA : Ajuste la valeur (80px) selon la hauteur de ta navbar */
+  padding-top: 100px; 
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
   color: var(--text-main);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 /* Header Style */
