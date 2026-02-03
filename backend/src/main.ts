@@ -17,7 +17,7 @@ async function bootstrap() {
   // 2. PORT ET INTERFACE
   // On force le port 8080 et l'écoute sur 127.0.0.1 (IP locale)
   // C'est l'adresse exacte que le tunnel Cloudflare va chercher
-  const port = process.env.PORT || 8080;
+  const port = process.env.PORT || 5000;
   const host = '127.0.0.1'; 
 
   await app.listen(port, host);
