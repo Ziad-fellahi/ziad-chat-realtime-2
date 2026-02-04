@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import Logo from './Logotemp'; // Import corrigé
+import Logo from './Logotemp'; 
 import '../styles/Navbar.css';
 
 function Navbar() {
@@ -10,26 +10,30 @@ function Navbar() {
   const isLoggedIn = !!token;
   
   let username = '';
+  let isAdmin = false;
+
   if (isLoggedIn) {
     try {
       const payload = token.split('.')[1];
       const decoded = JSON.parse(atob(payload));
       username = decoded.username;
+      // On vérifie le rôle soit dans le token, soit dans l'objet user stocké
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      isAdmin = decoded.role === 'admin' || (storedUser && storedUser.role === 'admin');
     } catch (e) {
       username = 'User';
     }
   }
 
   const handleLogout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  window.location.href = '/login'; // Utiliser window.location force un rafraîchissement propre
-};
+    localStorage.clear(); // Vide tout pour éviter les bugs de session
+    window.location.href = '/login'; // Refresh complet pour réinitialiser l'état React
+  };
 
   return (
     <nav className="navbar-glass">
       <div className="navbar-container">
-        <Link to="/" className="navbar-brand" style={{ textDecoration: 'none' }}>
+        <Link to="/" className="navbar-brand">
           <Logo size={32} />
         </Link>
 
@@ -37,21 +41,29 @@ function Navbar() {
           <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
             Accueil
           </Link>
-          {localStorage.getItem('role') === 'admin' && (
-            <Link to="/dashboard" className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>
-              Tableau de bord
-            </Link>
+
+          {isLoggedIn && (
+            <>
+              {/* Le Dashboard n'apparaît QUE pour les admins */}
+              {isAdmin && (
+                <Link to="/dashboard" className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>
+                  Tableau de bord
+                </Link>
+              )}
+              
+              <Link to="/chat" className={`nav-link ${location.pathname === '/chat' ? 'active' : ''}`}>
+                Chat
+              </Link>
+              
+              <Link to="/admin-docs" className={`nav-link ${location.pathname === '/admin-docs' ? 'active' : ''}`}>
+                Admin Docs
+              </Link>
+              
+              <Link to="/git" className={`nav-link ${location.pathname === '/git' ? 'active' : ''}`}>
+                Git Info
+              </Link>
+            </>
           )}
-          <Link to="/chat" className={`nav-link ${location.pathname === '/chat' ? 'active' : ''}`}>
-            Chat
-          </Link>
-          <Link to="/git" className="nav-link">Git Info</Link>
-          
-                   <Link to="/admin-docs" className="nav-link">Admin Docs</Link>
-
-
-          
-          
 
           <div className="nav-divider"></div>
 
@@ -67,6 +79,7 @@ function Navbar() {
                   {username.charAt(0).toUpperCase()}
                 </div>
                 <span className="username-text">{username}</span>
+                {isAdmin && <span className="admin-tag-nav">ADMIN</span>}
               </div>
               <button onClick={handleLogout} className="btn-logout-icon" title="Déconnexion">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
