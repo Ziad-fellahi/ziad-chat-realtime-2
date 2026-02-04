@@ -5,8 +5,6 @@ import '../styles/Navbar.css';
 
 function Navbar() {
   const location = useLocation();
-  
-  // 1. Récupération brute
   const token = localStorage.getItem('token');
   const storedUser = localStorage.getItem('user');
   
@@ -19,8 +17,15 @@ function Navbar() {
 
   const isLoggedIn = !!token;
   const username = user?.username || 'User';
-  // On check le rôle très simplement
+  
+  // DÉTECTION DU RÔLE
+  // On vérifie le rôle dans l'objet user envoyé par le login
   const isAdmin = user?.role === 'admin';
+
+  // Debug pour toi (à regarder dans la console F12)
+  if (isLoggedIn) {
+    console.log("Données utilisateur connectées :", user);
+  }
 
   const handleLogout = () => {
     localStorage.clear();
@@ -42,6 +47,7 @@ function Navbar() {
           {isLoggedIn && (
             <>
               <Link to="/chat" className="nav-link">Chat</Link>
+              {/* Le bouton n'apparaît que si le rôle est strictement 'admin' */}
               {isAdmin && (
                 <Link to="/dashboard" className="nav-link">Tableau de bord</Link>
               )}
@@ -62,7 +68,7 @@ function Navbar() {
                 <span className="username-text">{username}</span>
                 {isAdmin && <span className="admin-tag-nav">ADMIN</span>}
               </div>
-              <button onClick={handleLogout} className="btn-logout-icon">
+              <button onClick={handleLogout} className="btn-logout-icon" title="Déconnexion">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                   <polyline points="16 17 21 12 16 7"></polyline>
