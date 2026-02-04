@@ -6,31 +6,32 @@ import '../styles/Navbar.css';
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // On récupère les données brutes
   const token = localStorage.getItem('token');
+  const storedUser = localStorage.getItem('user');
   
-  // On récupère l'utilisateur depuis le localStorage (plus fiable que de décoder le token à chaque fois)
-  const storedUser = JSON.parse(localStorage.getItem('user'));
-  
-  const isLoggedIn = !!token;
+  let isLoggedIn = false;
   let username = 'User';
   let isAdmin = false;
 
-  if (isLoggedIn) {
-    // 1. On récupère le nom
-    username = storedUser?.username || "User";
-
-    // 2. LOGIQUE DE DÉTECTION ADMIN ULTRA-LÉGÈRE
-    // On check le champ 'role' dans l'objet user OU on décode le token
+  // VERIFICATION DE SECURITÉ
+  if (token && storedUser) {
     try {
-      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+      const userObj = JSON.parse(storedUser);
+      isLoggedIn = true;
+      username = userObj.username || 'User';
       
-      // On est admin si le role est 'admin' quelque part
-      if (storedUser?.role === 'admin' || tokenPayload?.role === 'admin') {
+      // On vérifie le rôle dans l'objet user ET on décode le token pour être sûr
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      
+      if (userObj.role === 'admin' || payload.role === 'admin') {
         isAdmin = true;
       }
     } catch (e) {
-      // Si le décodage échoue, on se fie à l'objet user
-      if (storedUser?.role === 'admin') isAdmin = true;
+      console.error("Session corrompue, nettoyage...");
+      // Si les données sont bizarres, on ne bloque pas l'utilisateur, on le déconnecte proprement
+      // localStorage.clear(); 
     }
   }
 
@@ -47,25 +48,13 @@ function Navbar() {
         </Link>
 
         <div className="navbar-links">
-          <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
-            Accueil
-          </Link>
-          
-          <Link to="/git" className={`nav-link ${location.pathname === '/git' ? 'active' : ''}`}>
-            Git Info
-          </Link>
-          
-          <Link to="/admin-docs" className={`nav-link ${location.pathname === '/admin-docs' ? 'active' : ''}`}>
-            Admin Docs
-          </Link>
+          <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Accueil</Link>
+          <Link to="/git" className={`nav-link ${location.pathname === '/git' ? 'active' : ''}`}>Git Info</Link>
+          <Link to="/admin-docs" className={`nav-link ${location.pathname === '/admin-docs' ? 'active' : ''}`}>Admin Docs</Link>
 
           {isLoggedIn && (
             <>
-              <Link to="/chat" className={`nav-link ${location.pathname === '/chat' ? 'active' : ''}`}>
-                Chat
-              </Link>
-              
-              {/* ON FORCE L'AFFICHAGE SI isAdmin EST TRUE */}
+              <Link to="/chat" className={`nav-link ${location.pathname === '/chat' ? 'active' : ''}`}>Chat</Link>
               {isAdmin && (
                 <Link to="/dashboard" className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>
                   Tableau de bord
@@ -84,9 +73,7 @@ function Navbar() {
           ) : (
             <div className="user-profile">
               <div className="user-info-pill">
-                <div className="avatar-circle">
-                  {username.charAt(0).toUpperCase()}
-                </div>
+                <div className="avatar-circle">{username.charAt(0).toUpperCase()}</div>
                 <span className="username-text">{username}</span>
                 {isAdmin && <span className="admin-tag-nav">ADMIN</span>}
               </div>
