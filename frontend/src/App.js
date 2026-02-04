@@ -7,6 +7,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import GitResources from './components/GitResources';
+import AdminDocs from './pages/AdminDocs'; // Import de la nouvelle page
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/git" element={<GitResources />} />
+        <Route path="/admin-docs" element={<AdminDocs />} /> 
+        
       </Routes>
     </Router>
   );

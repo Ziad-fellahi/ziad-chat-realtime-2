@@ -1,0 +1,116 @@
+.resources-container {
+  min-height: 100vh;
+  padding: 120px 20px 60px;
+  background: radial-gradient(circle at top right, #2c2f33, #0f0f10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.resources-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, #5865f2, #a29bfe);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.resource-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 24px;
+}
+
+.special-card {
+  border: 1px solid rgba(88, 101, 242, 0.3);
+  background: rgba(88, 101, 242, 0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.card-header h3 {
+  color: white;
+  margin: 0;
+}
+
+/* Badge ADMIN à droite */
+.admin-badge-right {
+  background: #ed4245;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+
+.admin-generator {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.admin-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(88, 101, 242, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  color: white;
+  outline: none;
+}
+
+.command-item {
+  cursor: pointer;
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.command-item:hover { background: rgba(255, 255, 255, 0.06); }
+.command-item.active { border-color: #43b581; background: rgba(67, 181, 129, 0.1); }
+
+.cmd-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.command-item code {
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: 'Fira Code', monospace;
+  word-break: break-all;
+}
+
+.copy-status {
+  font-size: 0.75rem;
+  color: #5865f2;
+}
+
+.command-item p {
+  color: #b9bbbe;
+  font-size: 0.85rem;
+  margin-top: 8px;
+}

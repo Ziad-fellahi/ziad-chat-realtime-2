@@ -21,9 +21,10 @@ function Navbar() {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = '/login'; // Utiliser window.location force un rafraîchissement propre
+};
 
   return (
     <nav className="navbar-glass">
@@ -45,6 +46,11 @@ function Navbar() {
             Chat
           </Link>
           <Link to="/git" className="nav-link">Git Info</Link>
+          
+                   <Link to="/admin-docs" className="nav-link">Admin Docs</Link>
+
+
+          
           
 
           <div className="nav-divider"></div>
