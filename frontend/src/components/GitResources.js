@@ -27,31 +27,40 @@ const GitResources = () => {
       ]
     },
     {
+      title: "🚀 Gestion Production (PM2)",
+      commands: [
+        { id: 'pm1', cmd: "pm2 status", desc: "Voir l'état de tes 4 instances et du tunnel." },
+        { id: 'pm2', cmd: "pm2 logs", desc: "Afficher les erreurs du backend en direct." },
+        { id: 'pm3', cmd: "pm2 restart govo-back", desc: "Redémarrer proprement les 4 cœurs." },
+        { id: 'pm4', cmd: "pm2 save", desc: "Sauvegarder la config pour le prochain reboot." }
+      ]
+    },
+    {
+      title: "🔴 Redis & Temps Réel",
+      commands: [
+        { id: 'rd1', cmd: "redis-cli ping", desc: "Vérifier si Redis est vivant (réponse PONG)." },
+        { id: 'rd2', cmd: "redis-cli monitor", desc: "Espionner les messages du chat en temps réel." },
+        { id: 'rd3', cmd: "redis-cli info clients", desc: "Vérifier que les 4 instances sont connectées." }
+      ]
+    },
+    {
+      title: "🛠️ Maintenance & Réseau",
+      commands: [
+        { id: 'nt1', cmd: "curl http://localhost:4040/api/tunnels", desc: "Récupérer la nouvelle URL Ngrok." },
+        { id: 'nt2', cmd: "sudo fuser -k 5000/tcp", desc: "Forcer la libération du port 5000." },
+        { id: 'nt3', cmd: "npm run build", desc: "Compiler le code NestJS sur Ubuntu." }
+      ]
+    },
+    {
       title: "🌿 Branches & Navigation",
       commands: [
         { id: 'c4', cmd: "git branch", desc: "Lister les branches existantes." },
         { id: 'c5', cmd: "git checkout <nom>", desc: "Changer de branche." },
         { id: 'c6', cmd: "git checkout -b <nom>", desc: "Créer et changer de branche." }
       ]
-    },
-    {
-      title: "🔄 Fusion & Synchronisation",
-      commands: [
-        { id: 'c7', cmd: "git pull", desc: "Récupérer le travail des autres." },
-        { id: 'c8', cmd: "git merge <source>", desc: "Fusionner une branche." },
-        { id: 'c9', cmd: "git merge --abort", desc: "Annuler une fusion qui se passe mal." }
-      ]
-    },
-    {
-      title: "🌐 Configuration",
-      commands: [
-        { id: 'c10', cmd: "git remote -v", desc: "Voir l'URL actuelle du dépôt." },
-        { id: 'c11', cmd: "git remote set-url origin <url>", desc: "Changer l'URL de destination." }
-      ]
     }
   ];
 
-  // Icône de copie minimaliste (SVG)
   const CopyIcon = () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -62,8 +71,8 @@ const GitResources = () => {
   return (
     <div className="resources-container">
       <div className="resources-header">
-        <h1>Guide <span className="text-gradient">Git</span></h1>
-        <p>Cliquez sur une commande pour la copier instantanément dans votre terminal.</p>
+        <h1>Guide <span className="text-gradient">Serveur & Git</span></h1>
+        <p>Cliquez sur une commande pour piloter votre serveur Ubuntu à distance.</p>
       </div>
 
       <div className="resources-grid">
@@ -76,7 +85,7 @@ const GitResources = () => {
                   className={`copy-all-btn ${copiedId === 'full-seq' ? 'copied' : ''}`}
                   onClick={copyFullSequence}
                 >
-                  {copiedId === 'full-seq' ? 'Copié !' : 'Copier la séquence'}
+                  {copiedId === 'full-seq' ? 'Copié !' : 'Copier Git Push'}
                 </button>
               )}
             </div>
