@@ -64,7 +64,7 @@ function ChatPage() {
             <h2>général</h2>
           </div>
           <div className="header-right">
-            <span className="current-user">@{userName}</span>
+            <span className="current-user-tag">@{userName}</span>
           </div>
         </div>
 
@@ -78,10 +78,10 @@ function ChatPage() {
                 <div className="message-info">
                   <span className="message-user">{m.user}</span>
                   {m.role === 'admin' && <span className="admin-badge">ADMIN</span>}
-                  <span className="message-time">{m.time}</span>
                 </div>
                 <div className="message-bubble">
-                  {m.text}
+                  <span className="message-text">{m.text}</span>
+                  <span className="message-time-inside">{m.time}</span>
                 </div>
               </div>
             </div>
@@ -112,4 +112,4 @@ function ChatPage() {
   );
 }
 
-export default ChatPage;
+export default ChatPage;  
