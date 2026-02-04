@@ -11,7 +11,6 @@
   display: flex;
   align-items: center;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 .navbar-container {
@@ -35,7 +34,6 @@
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
-  font-size: 0.95rem;
 }
 
 .nav-link:hover, .nav-link.active {
@@ -70,6 +68,10 @@
   transition: background 0.2s;
 }
 
+.btn-primary-sm:hover {
+  background: #4752c4;
+}
+
 .user-profile {
   display: flex;
   align-items: center;
@@ -79,7 +81,7 @@
 .user-info-pill {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: rgba(255, 255, 255, 0.05);
   padding: 4px 12px 4px 6px;
   border-radius: 20px;
@@ -99,17 +101,6 @@
   font-size: 0.8rem;
 }
 
-.nav-admin-badge {
-  color: #f85149;
-  font-size: 0.65rem;
-  font-weight: 800;
-  border: 1px solid #f85149;
-  padding: 1px 6px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  background: rgba(248, 81, 73, 0.1);
-}
-
 .username-text {
   color: #fff;
   font-weight: 600;
@@ -124,10 +115,9 @@
   border-radius: 6px;
   display: flex;
   align-items: center;
-  transition: all 0.2s;
+  transition: background 0.2s;
 }
 
 .btn-logout-icon:hover {
   background: rgba(255, 71, 87, 0.1);
-  transform: scale(1.05);
 }
