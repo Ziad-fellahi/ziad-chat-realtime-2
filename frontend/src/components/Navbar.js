@@ -7,22 +7,30 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const token = localStorage.getItem('token');
-  const isLoggedIn = !!token;
   
-  let username = '';
+  // On récupère l'utilisateur depuis le localStorage (plus fiable que de décoder le token à chaque fois)
+  const storedUser = JSON.parse(localStorage.getItem('user'));
+  
+  const isLoggedIn = !!token;
+  let username = 'User';
   let isAdmin = false;
 
   if (isLoggedIn) {
+    // 1. On récupère le nom
+    username = storedUser?.username || "User";
+
+    // 2. LOGIQUE DE DÉTECTION ADMIN ULTRA-LÉGÈRE
+    // On check le champ 'role' dans l'objet user OU on décode le token
     try {
-      const payload = token.split('.')[1];
-      const decoded = JSON.parse(atob(payload));
-      username = decoded.username;
+      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
       
-      // Récupération sécurisée du rôle (depuis le token ou le storage)
-      const storedUser = JSON.parse(localStorage.getItem('user'));
-      isAdmin = decoded.role === 'admin' || (storedUser && storedUser.role === 'admin');
+      // On est admin si le role est 'admin' quelque part
+      if (storedUser?.role === 'admin' || tokenPayload?.role === 'admin') {
+        isAdmin = true;
+      }
     } catch (e) {
-      username = 'User';
+      // Si le décodage échoue, on se fie à l'objet user
+      if (storedUser?.role === 'admin') isAdmin = true;
     }
   }
 
@@ -34,12 +42,11 @@ function Navbar() {
   return (
     <nav className="navbar-glass">
       <div className="navbar-container">
-        <Link to="/" className="navbar-brand" style={{ textDecoration: 'none' }}>
+        <Link to="/" className="navbar-brand">
           <Logo size={32} />
         </Link>
 
         <div className="navbar-links">
-          {/* LIENS PUBLICS (Visibles par tous pour ton rapport) */}
           <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
             Accueil
           </Link>
@@ -52,14 +59,13 @@ function Navbar() {
             Admin Docs
           </Link>
 
-          {/* LIENS PRIVÉS (Nécessitent une connexion) */}
           {isLoggedIn && (
             <>
               <Link to="/chat" className={`nav-link ${location.pathname === '/chat' ? 'active' : ''}`}>
                 Chat
               </Link>
               
-              {/* TABLEAU DE BORD : SEULEMENT POUR L'ADMIN */}
+              {/* ON FORCE L'AFFICHAGE SI isAdmin EST TRUE */}
               {isAdmin && (
                 <Link to="/dashboard" className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>
                   Tableau de bord
