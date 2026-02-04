@@ -81,6 +81,7 @@ function ChatPage() {
                 </div>
                 <div className="message-bubble">
                   <span className="message-text">{m.text}</span>
+                  {/* L'heure est maintenant ici, dans la bulle */}
                   <span className="message-time-inside">{m.time}</span>
                 </div>
               </div>
