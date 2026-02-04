@@ -1,147 +1,90 @@
-/* Variables de couleurs Premium */
-:root {
-  --bg-dark: #0f172a;
-  --card-bg: rgba(30, 41, 59, 0.7);
-  --accent: #6366f1;
-  --success: #22c55e;
-  --warning: #eab308;
-  --text-main: #f1f5f9;
-  --text-muted: #94a3b8;
-}
-
 .dashboard-container {
-  background-color: var(--bg-dark);
   min-height: 100vh;
-  /* AJOUTE ÇA : Ajuste la valeur (80px) selon la hauteur de ta navbar */
-  padding-top: 100px; 
-  padding-left: 2rem;
-  padding-right: 2rem;
-  padding-bottom: 2rem;
-  color: var(--text-main);
+  padding: 100px 40px 40px;
+  background: radial-gradient(circle at top right, #2c2f33, #0f0f10);
+  color: white;
   font-family: 'Inter', sans-serif;
 }
 
-/* Header Style */
 .db-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 30px;
 }
 
-.db-title {
-  font-size: 1.8rem;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-}
+.db-title { font-size: 1.8rem; font-weight: 700; }
+.db-badge { background: #5865f2; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; margin-left: 10px; vertical-align: middle; }
 
-.db-badge {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--accent);
-  padding: 0.25rem 0.75rem;
-  border-radius: 99px;
-  font-size: 0.8rem;
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  margin-left: 1rem;
-}
-
-/* Stats Cards */
-.stats-grid {
+.db-main-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: 300px 1fr;
+  gap: 25px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.stat-card {
-  background: var(--card-bg);
-  backdrop-filter: blur(12px);
-  padding: 1.5rem;
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-5px);
-  border-color: var(--accent);
-}
-
-.stat-icon {
-  width: 48px;
-  height: 48px;
-  background: var(--bg-dark);
+/* Sidebar */
+.stat-simple-card {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 20px;
   border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
+  flex-direction: column;
+  margin-bottom: 20px;
 }
+.stat-simple-card .value { font-size: 2rem; font-weight: 800; color: #5865f2; }
 
-.stat-info .stat-label {
-  color: var(--text-muted);
-  font-size: 0.875rem;
-  margin-bottom: 0.25rem;
-}
-
-.stat-info .stat-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-/* Layout Grids */
-.db-content-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 1.5rem;
-}
-
-.chart-card, .table-card {
-  background: var(--card-bg);
-  padding: 1.5rem;
-  border-radius: 1rem;
+.online-card {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 20px;
+  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.chart-card h3, .table-card h3 {
-  font-size: 1.1rem;
-  margin-bottom: 1.5rem;
-  color: var(--text-main);
+.user-online-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  color: #b9bbbe;
 }
 
-/* Messages List */
-.msg-list {
+.status-dot { width: 8px; height: 8px; background: #43b581; border-radius: 50%; box-shadow: 0 0 8px #43b581; }
+
+/* Terminal Style */
+.terminal-card {
+  background: #09090b;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  height: 70vh;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
 }
 
-.msg-item {
-  padding: 0.75rem;
+.terminal-header {
+  background: #18181b;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex;
-  flex-direction: column;
 }
 
-.msg-user {
-  color: var(--accent);
-  font-weight: 600;
+.dots { display: flex; gap: 6px; }
+.dots span { width: 10px; height: 10px; border-radius: 50%; background: #3f3f46; }
+.terminal-title { font-size: 0.85rem; color: #71717a; font-family: monospace; }
+
+.terminal-body {
+  padding: 20px;
+  overflow-y: auto;
+  font-family: 'Fira Code', monospace;
   font-size: 0.9rem;
 }
 
-.msg-text {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  margin-top: 0.25rem;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.stat-card { animation: fadeIn 0.4s ease forwards; }
+.log-line { margin-bottom: 8px; line-height: 1.4; border-bottom: 1px solid rgba(255, 255, 255, 0.02); padding-bottom: 4px; }
+.log-time { color: #52525b; margin-right: 10px; }
+.log-user { color: #5865f2; font-weight: 700; margin-right: 8px; }
+.log-msg { color: #e4e4e7; }
