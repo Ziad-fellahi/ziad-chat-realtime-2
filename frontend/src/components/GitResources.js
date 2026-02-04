@@ -18,6 +18,17 @@ const GitResources = () => {
 
   const sections = [
     {
+      title: "🚨 ZONE DE RÉCUPÉRATION (Full Reset)",
+      isSpecial: true,
+      commands: [
+        { 
+          id: 'full-reset', 
+          cmd: "pm2 delete all && sudo fuser -k 5000/tcp && sudo systemctl restart redis-server && cd /var/www/govostage/backend && npm run build && pm2 start dist/main.js --name 'govo-back' -i 4 && pm2 start 'ngrok http 5000' --name 'ngrok-tunnel' && pm2 save", 
+          desc: "NETTOYAGE TOTAL : Tue tout, libère le port 5000, relance Redis, recompile et redémarre le Cluster + le Tunnel." 
+        }
+      ]
+    },
+    {
       title: "⚡ Séquence Quotidienne",
       isSpecial: true,
       commands: [
@@ -39,16 +50,16 @@ const GitResources = () => {
       title: "🔴 Redis & Temps Réel",
       commands: [
         { id: 'rd1', cmd: "redis-cli ping", desc: "Vérifier si Redis est vivant (réponse PONG)." },
-        { id: 'rd2', cmd: "redis-cli monitor", desc: "Espionner les messages du chat en temps réel." },
+        { id: 'rd2', cmd: "redis-cli monitor", desc: "Espionner les messages du chat en temps réel (Test Multi-cœurs)." },
         { id: 'rd3', cmd: "redis-cli info clients", desc: "Vérifier que les 4 instances sont connectées." }
       ]
     },
     {
       title: "🛠️ Maintenance & Réseau",
       commands: [
-        { id: 'nt1', cmd: "curl http://localhost:4040/api/tunnels", desc: "Récupérer la nouvelle URL Ngrok." },
-        { id: 'nt2', cmd: "sudo fuser -k 5000/tcp", desc: "Forcer la libération du port 5000." },
-        { id: 'nt3', cmd: "npm run build", desc: "Compiler le code NestJS sur Ubuntu." }
+        { id: 'nt1', cmd: "curl http://localhost:4040/api/tunnels", desc: "Récupérer la nouvelle URL Ngrok pour Vercel." },
+        { id: 'nt2', cmd: "sudo fuser -k 5000/tcp", desc: "Forcer la libération du port 5000 (en cas de bug)." },
+        { id: 'nt3', cmd: "npm run build", desc: "Compiler le code NestJS sur Ubuntu après un changement." }
       ]
     },
     {
@@ -72,7 +83,7 @@ const GitResources = () => {
     <div className="resources-container">
       <div className="resources-header">
         <h1>Guide <span className="text-gradient">Serveur & Git</span></h1>
-        <p>Cliquez sur une commande pour piloter votre serveur Ubuntu à distance.</p>
+        <p>Pilotez votre serveur Ubuntu et synchronisez votre code.</p>
       </div>
 
       <div className="resources-grid">
@@ -85,7 +96,7 @@ const GitResources = () => {
                   className={`copy-all-btn ${copiedId === 'full-seq' ? 'copied' : ''}`}
                   onClick={copyFullSequence}
                 >
-                  {copiedId === 'full-seq' ? 'Copié !' : 'Copier Git Push'}
+                  {copiedId === 'full-seq' ? 'Copié !' : 'Copier'}
                 </button>
               )}
             </div>
