@@ -41,7 +41,7 @@ function Dashboard() {
   useEffect(() => {
     if (token && user?.role === 'admin') {
       fetchData();
-      const interval = setInterval(fetchData, 5000); // Rafraîchissement toutes le 5s
+      const interval = setInterval(fetchData, 8080); // Rafraîchissement toutes le 5s
       return () => clearInterval(interval);
     }
   }, [token, user]);

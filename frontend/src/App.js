@@ -9,6 +9,10 @@ import Login from './pages/Login';
 import GitResources from './components/GitResources';
 import AdminDocs from './pages/AdminDocs'; // Import de la nouvelle page
 
+// Sur ton PC local
+const SOCKET_URL = "https://stage.govo.fr"; 
+// Ou ton nouveau nom de domaine
+
 function App() {
   return (
     <Router>

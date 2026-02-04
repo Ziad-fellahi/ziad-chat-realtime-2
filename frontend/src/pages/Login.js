@@ -8,30 +8,38 @@ export default function Login() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    try {
-  // On récupère l'URL depuis les variables d'environnement, sinon on utilise localhost par défaut
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
-
-const res = await fetch(`${BACKEND_URL}/auth/login`, {
   
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-      if (!res.ok) throw new Error('Identifiants invalides');
-      const data = await res.json();
-      localStorage.setItem('token', data.access_token);
-      if (data.role) {
-        localStorage.setItem('role', data.role);
-      }
-      navigate('/');
-    } catch (err) {
-      setError(err.message);
+  
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError('');
+  try {
+    // Utilise ton nouveau domaine sans / à la fin
+    const BACKEND_URL = "https://stage.govo.fr";
+
+    const res = await fetch(`${BACKEND_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json' 
+      },
+      mode: 'cors', // Force le mode CORS
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (!res.ok) throw new Error('Identifiants invalides');
+    
+    const data = await res.json();
+    localStorage.setItem('token', data.access_token);
+    if (data.role) {
+      localStorage.setItem('role', data.role);
     }
-  };
+    navigate('/');
+  } catch (err) {
+    setError(err.message);
+  }
+};
 
   return (
     <div style={{
@@ -64,5 +72,5 @@ const res = await fetch(`${BACKEND_URL}/auth/login`, {
         {error && <div className="error" style={{ color: '#d32f2f', marginTop: 18, textAlign: 'center', fontWeight: 500 }}>{error}</div>}
       </div>
     </div>
-  );
-}
+    );
+  }

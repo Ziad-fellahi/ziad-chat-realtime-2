@@ -12,7 +12,7 @@ export default function Register() {
     e.preventDefault();
     setError('');
 
-    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://uncolourable-frederic-domesticative.ngrok-free.dev';
+    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://stage.govo.fr';
 
     try {
       const res = await fetch(`${BACKEND_URL}/auth/register`, {

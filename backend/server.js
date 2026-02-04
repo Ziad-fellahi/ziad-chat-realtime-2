@@ -7,7 +7,6 @@ const { createAdapter } = require('@socket.io/redis-adapter');
 
 const app = express();
 
-// --- 1. CONFIGURATION CORS (Pour Vercel + Ngrok) ---
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*"); 
   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");

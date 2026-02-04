@@ -12,7 +12,7 @@ const AdminDocs = () => {
     });
   };
 
-  const dynamicAdminCmd = `curl -X POST http://localhost:5000/auth/register -H 'Content-Type: application/json' -d '{"username":"${adminName}", "password":"${adminName}", "role":"admin"}'`;
+  const dynamicAdminCmd = `curl -X POST http://localhost:8080/auth/register -H 'Content-Type: application/json' -d '{"username":"${adminName}", "password":"${adminName}", "role":"admin"}'`;
 
   const sections = [
     {
@@ -21,7 +21,7 @@ const AdminDocs = () => {
       commands: [
         { 
           id: 'full-reset', 
-          cmd: "pm2 delete all && sudo fuser -k 5000/tcp && sudo systemctl restart redis-server && cd /var/www/govostage/backend && npm run build && pm2 start dist/main.js --name 'govo-back' -i 4 && pm2 start 'ngrok http 5000' --name 'ngrok-tunnel' && pm2 save", 
+          cmd: "pm2 delete all && sudo fuser -k 8080/tcp && sudo systemctl restart redis-server && cd /var/www/govostage/backend && npm run build && pm2 start dist/main.js --name 'govo-back' -i 4 && pm2 start 'ngrok http 8080' --name 'ngrok-tunnel' && pm2 save", 
           desc: "Relance complète : Nettoyage ports, Redis, Build et Cluster 4 cœurs." 
         }
       ]
