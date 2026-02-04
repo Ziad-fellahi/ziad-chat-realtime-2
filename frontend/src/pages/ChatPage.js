@@ -64,7 +64,7 @@ function ChatPage() {
             <h2>général</h2>
           </div>
           <div className="header-right">
-            <span className="current-user-tag">@{userName}</span>
+            <span className="current-user">@{userName}</span>
           </div>
         </div>
 
@@ -112,4 +112,4 @@ function ChatPage() {
   );
 }
 
-export default ChatPage;  
+export default ChatPage;
