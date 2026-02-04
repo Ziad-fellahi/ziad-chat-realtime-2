@@ -13,7 +13,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 70px; /* RÉGLE LE PROBLÈME DE LA NAVBAR */
+  padding-top: 70px; /* Espace pour la Navbar */
   box-sizing: border-box;
 }
 
@@ -74,16 +74,14 @@
 .message-user { font-weight: 600; color: #fff; font-size: 0.95rem; }
 .admin-badge { background: #f44336; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 4px; font-weight: bold; }
 
-/* Bulle avec heure interne */
+/* --- LA BULLE ET L'HEURE (CORRECTION ICI) --- */
 .message-bubble {
   background-color: #36393e;
-  padding: 10px 15px;
+  padding: 10px 14px;
   border-radius: 0 12px 12px 12px;
   color: #dcddde;
-  line-height: 1.5;
-  font-size: 0.95rem;
   display: flex;
-  flex-direction: column; /* Pour mettre l'heure en dessous du texte */
+  flex-direction: column; /* Force l'heure à aller en bas */
   min-width: 80px;
 }
 
@@ -94,19 +92,26 @@
 }
 
 .message-text {
+  font-size: 0.95rem;
+  line-height: 1.5;
   word-break: break-word;
+  display: block;
 }
 
 .message-time-inside {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  align-self: flex-end; /* Pousse l'heure à droite */
+  font-size: 0.7rem !important; /* Taille petite */
+  color: #ffffff !important; /* FORCER LE BLANC PUR */
+  align-self: flex-end; /* Calé à droite */
   margin-top: 4px;
-  opacity: 0.8;
+  opacity: 0.8; /* Légère transparence pour le style */
+  display: inline-block;
+  min-width: 40px;
+  text-align: right;
 }
 
 .is-me .message-time-inside {
-  color: rgba(255, 255, 255, 0.7); /* Plus clair sur les bulles bleues */
+  color: #ffffff !important; /* Blanc pur aussi pour tes messages */
+  opacity: 0.9;
 }
 
 /* Input Area */

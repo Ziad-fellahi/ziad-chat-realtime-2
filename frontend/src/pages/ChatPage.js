@@ -79,11 +79,17 @@ function ChatPage() {
                   <span className="message-user">{m.user}</span>
                   {m.role === 'admin' && <span className="admin-badge">ADMIN</span>}
                 </div>
+                
                 <div className="message-bubble">
-                  <span className="message-text">{m.text}</span>
-                  {/* L'heure est maintenant ici, dans la bulle */}
-                  <span className="message-time-inside">{m.time}</span>
-                </div>
+            <span className="message-text">{m.text}</span>
+            {/* On s'assure que m.time contient bien une valeur */}
+            <span className="message-time-inside">
+             {m.time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+             </span>
+           </div>
+
+
+
               </div>
             </div>
           ))}
@@ -93,7 +99,7 @@ function ChatPage() {
         <div className="chat-input-area">
           <form onSubmit={handleSend} className="input-box">
             <textarea 
-              placeholder="Envoyer un message dans #général"
+              placeholder="Envoyer un message #général"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={(e) => {
