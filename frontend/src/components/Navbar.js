@@ -1,31 +1,36 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import Logo from './Logotemp'; 
-import '../styles/Navbar.css';
-
 function Navbar() {
   const location = useLocation();
   const token = localStorage.getItem('token');
   const storedUser = localStorage.getItem('user');
   
-  let user = null;
-  try {
-    user = storedUser ? JSON.parse(storedUser) : null;
-  } catch (e) {
-    user = null;
-  }
+  let username = 'Invité';
+  let isAdmin = false;
+  let isLoggedIn = !!token;
 
-  const isLoggedIn = !!token;
-  const username = user?.username || 'User';
-  
-  // DÉTECTION DU RÔLE
-  // On vérifie le rôle dans l'objet user envoyé par le login
-  const isAdmin = user?.role === 'admin';
-
-  // Debug pour toi (à regarder dans la console F12)
   if (isLoggedIn) {
-    console.log("Données utilisateur connectées :", user);
+    try {
+      // ÉTAPE 1 : On décode le Token (C'est la source la plus sûre)
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      
+      // ÉTAPE 2 : On récupère les infos du Token
+      username = payload.username || 'User';
+      isAdmin = payload.role === 'admin';
+
+      // ÉTAPE 3 : Si le localStorage 'user' est vide (null), on le répare
+      if (!storedUser) {
+        localStorage.setItem('user', JSON.stringify({ 
+          username: username, 
+          role: payload.role 
+        }));
+      }
+    } catch (e) {
+      console.error("Erreur de décodage du token");
+      isLoggedIn = false;
+    }
   }
+
+  // Pour vérifier dans ta console (F12)
+  console.log("Nom:", username, " | Admin:", isAdmin);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -47,7 +52,7 @@ function Navbar() {
           {isLoggedIn && (
             <>
               <Link to="/chat" className="nav-link">Chat</Link>
-              {/* Le bouton n'apparaît que si le rôle est strictement 'admin' */}
+              {/* Le bouton apparaît enfin si le Token dit 'admin' */}
               {isAdmin && (
                 <Link to="/dashboard" className="nav-link">Tableau de bord</Link>
               )}
@@ -68,7 +73,7 @@ function Navbar() {
                 <span className="username-text">{username}</span>
                 {isAdmin && <span className="admin-tag-nav">ADMIN</span>}
               </div>
-              <button onClick={handleLogout} className="btn-logout-icon" title="Déconnexion">
+              <button onClick={handleLogout} className="btn-logout-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                   <polyline points="16 17 21 12 16 7"></polyline>
@@ -82,5 +87,3 @@ function Navbar() {
     </nav>
   );
 }
-
-export default Navbar;
