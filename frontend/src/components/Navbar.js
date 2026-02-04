@@ -17,7 +17,8 @@ function Navbar() {
       const payload = token.split('.')[1];
       const decoded = JSON.parse(atob(payload));
       username = decoded.username;
-      // On vérifie le rôle soit dans le token, soit dans l'objet user stocké
+      
+      // Récupération sécurisée du rôle (depuis le token ou le storage)
       const storedUser = JSON.parse(localStorage.getItem('user'));
       isAdmin = decoded.role === 'admin' || (storedUser && storedUser.role === 'admin');
     } catch (e) {
@@ -26,42 +27,44 @@ function Navbar() {
   }
 
   const handleLogout = () => {
-    localStorage.clear(); // Vide tout pour éviter les bugs de session
-    window.location.href = '/login'; // Refresh complet pour réinitialiser l'état React
+    localStorage.clear();
+    window.location.href = '/login'; 
   };
 
   return (
     <nav className="navbar-glass">
       <div className="navbar-container">
-        <Link to="/" className="navbar-brand">
+        <Link to="/" className="navbar-brand" style={{ textDecoration: 'none' }}>
           <Logo size={32} />
         </Link>
 
         <div className="navbar-links">
+          {/* LIENS PUBLICS (Visibles par tous pour ton rapport) */}
           <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
             Accueil
           </Link>
+          
+          <Link to="/git" className={`nav-link ${location.pathname === '/git' ? 'active' : ''}`}>
+            Git Info
+          </Link>
+          
+          <Link to="/admin-docs" className={`nav-link ${location.pathname === '/admin-docs' ? 'active' : ''}`}>
+            Admin Docs
+          </Link>
 
+          {/* LIENS PRIVÉS (Nécessitent une connexion) */}
           {isLoggedIn && (
             <>
-              {/* Le Dashboard n'apparaît QUE pour les admins */}
+              <Link to="/chat" className={`nav-link ${location.pathname === '/chat' ? 'active' : ''}`}>
+                Chat
+              </Link>
+              
+              {/* TABLEAU DE BORD : SEULEMENT POUR L'ADMIN */}
               {isAdmin && (
                 <Link to="/dashboard" className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>
                   Tableau de bord
                 </Link>
               )}
-              
-              <Link to="/chat" className={`nav-link ${location.pathname === '/chat' ? 'active' : ''}`}>
-                Chat
-              </Link>
-              
-              <Link to="/admin-docs" className={`nav-link ${location.pathname === '/admin-docs' ? 'active' : ''}`}>
-                Admin Docs
-              </Link>
-              
-              <Link to="/git" className={`nav-link ${location.pathname === '/git' ? 'active' : ''}`}>
-                Git Info
-              </Link>
             </>
           )}
 
