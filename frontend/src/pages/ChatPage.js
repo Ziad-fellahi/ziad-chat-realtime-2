@@ -57,38 +57,31 @@ function ChatPage() {
 
   return (
     <div className="chat-page-wrapper">
-      {/* Cercles de couleurs pour le fond vibrant */}
-      <div className="blob blob-1"></div>
-      <div className="blob blob-2"></div>
-      <div className="blob blob-3"></div>
-
-      <div className="chat-main-container">
+      <div className="chat-container">
         <div className="chat-header">
           <div className="header-left">
-            <div className="online-dot"></div>
-            <h2># salon-général</h2>
+            <span className="channel-hash">#</span>
+            <h2>général</h2>
           </div>
           <div className="header-right">
-            <span className="user-tag">@{userName}</span>
+            <span className="current-user">@{userName}</span>
           </div>
         </div>
 
         <div className="chat-messages-area">
           {chat.map((m, i) => (
-            <div key={i} className={`msg-row ${m.user === userName ? 'own-msg' : ''}`}>
-              <div className="avatar">
+            <div key={i} className={`message-item ${m.user === userName ? 'is-me' : ''}`}>
+              <div className="message-avatar">
                 {m.user?.charAt(0).toUpperCase()}
               </div>
-              <div className="msg-details">
-                <div className="msg-info">
-                  <span className="msg-author">{m.user}</span>
-                  {m.role === 'admin' && <span className="staff-tag">STAFF</span>}
+              <div className="message-content">
+                <div className="message-info">
+                  <span className="message-user">{m.user}</span>
+                  {m.role === 'admin' && <span className="admin-badge">ADMIN</span>}
+                  <span className="message-time">{m.time}</span>
                 </div>
-                <div className="bubble-container">
-                  <div className="bubble">
-                    <p className="text">{m.text}</p>
-                    <span className="time-stamp">{m.time}</span>
-                  </div>
+                <div className="message-bubble">
+                  {m.text}
                 </div>
               </div>
             </div>
@@ -96,11 +89,10 @@ function ChatPage() {
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="chat-input-section">
-          <form onSubmit={handleSend} className="glass-input-box">
+        <div className="chat-input-area">
+          <form onSubmit={handleSend} className="input-box">
             <textarea 
-              rows="1"
-              placeholder="Écrire un message..."
+              placeholder="Envoyer un message dans #général"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={(e) => {
@@ -110,10 +102,8 @@ function ChatPage() {
                 }
               }}
             />
-            <button type="submit" className="send-circle" disabled={!message.trim()}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9L22 2" />
-              </svg>
+            <button type="submit" className="send-button" disabled={!message.trim()}>
+              Envoyer
             </button>
           </form>
         </div>
