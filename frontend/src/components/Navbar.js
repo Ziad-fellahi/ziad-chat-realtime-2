@@ -1,3 +1,8 @@
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import Logo from './Logotemp'; 
+import '../styles/Navbar.css';
+
 function Navbar() {
   const location = useLocation();
   const token = localStorage.getItem('token');
@@ -9,14 +14,15 @@ function Navbar() {
 
   if (isLoggedIn) {
     try {
-      // ÉTAPE 1 : On décode le Token (C'est la source la plus sûre)
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      // ÉTAPE 1 : Décodage sécurisé pour Vercel/Navigateur
+      // On utilise window.atob pour s'assurer qu'on est côté client
+      const payload = JSON.parse(window.atob(token.split('.')[1]));
       
-      // ÉTAPE 2 : On récupère les infos du Token
+      // ÉTAPE 2 : Récupération
       username = payload.username || 'User';
       isAdmin = payload.role === 'admin';
 
-      // ÉTAPE 3 : Si le localStorage 'user' est vide (null), on le répare
+      // ÉTAPE 3 : Réparation automatique du localStorage
       if (!storedUser) {
         localStorage.setItem('user', JSON.stringify({ 
           username: username, 
@@ -24,13 +30,10 @@ function Navbar() {
         }));
       }
     } catch (e) {
-      console.error("Erreur de décodage du token");
-      isLoggedIn = false;
+      console.error("Session error:", e);
+      // Ne pas déconnecter l'utilisateur ici pour éviter les boucles infinies
     }
   }
-
-  // Pour vérifier dans ta console (F12)
-  console.log("Nom:", username, " | Admin:", isAdmin);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -45,16 +48,17 @@ function Navbar() {
         </Link>
 
         <div className="navbar-links">
-          <Link to="/" className="nav-link">Accueil</Link>
-          <Link to="/git" className="nav-link">Git Info</Link>
-          <Link to="/admin-docs" className="nav-link">Admin Docs</Link>
+          <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Accueil</Link>
+          <Link to="/git" className={`nav-link ${location.pathname === '/git' ? 'active' : ''}`}>Git Info</Link>
+          <Link to="/admin-docs" className={`nav-link ${location.pathname === '/admin-docs' ? 'active' : ''}`}>Admin Docs</Link>
 
           {isLoggedIn && (
             <>
-              <Link to="/chat" className="nav-link">Chat</Link>
-              {/* Le bouton apparaît enfin si le Token dit 'admin' */}
+              <Link to="/chat" className={`nav-link ${location.pathname === '/chat' ? 'active' : ''}`}>Chat</Link>
               {isAdmin && (
-                <Link to="/dashboard" className="nav-link">Tableau de bord</Link>
+                <Link to="/dashboard" className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>
+                  Tableau de bord
+                </Link>
               )}
             </>
           )}
@@ -73,7 +77,7 @@ function Navbar() {
                 <span className="username-text">{username}</span>
                 {isAdmin && <span className="admin-tag-nav">ADMIN</span>}
               </div>
-              <button onClick={handleLogout} className="btn-logout-icon">
+              <button onClick={handleLogout} className="btn-logout-icon" title="Déconnexion">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                   <polyline points="16 17 21 12 16 7"></polyline>
@@ -87,3 +91,5 @@ function Navbar() {
     </nav>
   );
 }
+
+export default Navbar; // Très important pour Vercel
