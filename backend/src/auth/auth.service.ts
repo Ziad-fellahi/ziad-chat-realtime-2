@@ -34,4 +34,8 @@ export class AuthService {
       role: user.role,
     };
   }
+
+  async getAllUsers() {
+    return this.userModel.find({}, { password: 0 }).exec();
+  }
 }
