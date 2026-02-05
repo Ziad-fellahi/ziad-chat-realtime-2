@@ -1,9 +1,16 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 import { AppModule } from './app.module';
 import { RedisIoAdapter } from './redis-io.adapter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // SERVIR LES ASSETS STATIQUES (favicon, images, etc.) depuis frontend/public
+  // Chemin relatif attendu depuis le dossier dist du backend après build
+  const staticPath = join(__dirname, '..', '..', 'frontend', 'public');
+  app.useStaticAssets(staticPath, { prefix: '/' });
 
   // CONFIGURATION CORS STRICTE
   app.enableCors({

@@ -1,6 +1,6 @@
 const { io } = require("socket.io-client");
 
-const NUM_BOTS = 500;
+const NUM_BOTS = 100;
 const URL = "https://stage.govo.fr";
 let globalCounter = 1;
 const bots = [];
@@ -36,6 +36,6 @@ setTimeout(() => {
     console.log(`[SEND] Bot-${activeBot.id} envoie le numéro : ${globalCounter}`);
     
     globalCounter++;
-  }, 10); //   seconde entre chaque message
+  }, 0); //   seconde entre chaque message
 
 }, 3000);
