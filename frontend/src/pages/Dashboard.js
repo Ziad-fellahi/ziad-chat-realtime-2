@@ -27,41 +27,16 @@ function Dashboard() {
       return;
     }
 
-    // 2. Chargement des utilisateurs inscrits
-    const fetchUsers = async () => {
-      try {
-        // Convertir wss:// en https:// ou ws:// en http://
-        const backendUrl = process.env.REACT_APP_BACKEND_URL.replace(/^wss?:/, 'https:');
-        const response = await fetch(`${backendUrl}/auth/users`, {
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Erreur HTTP: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('📥 Utilisateurs inscrits reçus:', data);
-        setAllRegisteredUsers(Array.isArray(data) ? data : []);
-        setTotalUsers(Array.isArray(data) ? data.length : 0);
-      } catch (err) {
-        console.error("❌ Erreur récupération utilisateurs:", err);
-        setAllRegisteredUsers([]);
-        setTotalUsers(0);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-
-    // 3. Socket.io pour le temps réel
+    // 2. Socket.io pour le temps réel
     socketRef.current = io(process.env.REACT_APP_BACKEND_URL, {
-      transports: ['websocket'],
-      query: { username: user.username, token: token }
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      reconnectionAttempts: 5,
+      query: { username: user.username, token: token },
+      secure: true,
+      rejectUnauthorized: false
     });
 
     // Écouter l'historique des messages
@@ -81,8 +56,12 @@ function Dashboard() {
 
     // Écouter la liste des utilisateurs connectés
     socketRef.current.on('update_user_list', (usernames) => {
-      console.log('👥 Utilisateurs en ligne:', usernames);
-      setOnlineUsernames(Array.isArray(usernames) ? usernames : []);
+      // Filtrer côté client les Guest- avant d'afficher / logger
+      const raw = Array.isArray(usernames) ? usernames : [];
+      const filtered = raw.filter(u => typeof u === 'string' && !u.startsWith('Guest-'));
+      console.log('👥 Utilisateurs en ligne (filtrés):', filtered);
+      setOnlineUsernames(raw);
+      setLoading(false);
     });
 
     // Écouter les erreurs de connexion
@@ -114,41 +93,37 @@ function Dashboard() {
 
   if (!token || user?.role !== 'admin') return null;
 
-  const onlineCount = onlineUsernames.length;
-  const offlineCount = totalUsers - onlineCount;
+  const visibleOnlineUsernames = onlineUsernames.filter(u => typeof u === 'string' && !u.startsWith('Guest-'));
+  const onlineCount = visibleOnlineUsernames.length;
 
   return (
     <div className="dashboard-container">
       <div className="db-main-grid">
         <div className="db-sidebar">
           <div className="user-management-card">
-            <h3>👥 Utilisateurs ({totalUsers})</h3>
+            <h3>👥 En ligne ({onlineCount})</h3>
             <div style={{ fontSize: '0.85rem', color: '#b0b0b0', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-              <span style={{ color: '#10b981', fontWeight: '600' }}>🟢 {onlineCount}</span> en ligne • 
-              <span style={{ color: '#9ca3af', fontWeight: '600', marginLeft: '8px' }}>⚫ {offlineCount}</span> hors ligne
+              <span style={{ color: '#10b981', fontWeight: '600' }}>🟢 {onlineCount}</span> utilisateurs connectés maintenant
             </div>
             <div className="user-list-scroll">
               {loading ? (
                 <div className="log-line" style={{ color: '#b0b0b0' }}>
-                  ⏳ Chargement des utilisateurs...
+                  ⏳ Connexion en cours...
                 </div>
-              ) : allRegisteredUsers.length > 0 ? (
-                allRegisteredUsers.map((u, idx) => {
-                  const isOnline = onlineUsernames.includes(u.username);
-                  return (
-                    <div key={u._id || idx} className={`user-item ${isOnline ? 'is-online' : 'is-offline'}`}>
-                      <span className="status-indicator"></span>
-                      <div className="user-info">
-                        <span className="username">{u.username}</span>
-                        <span className="user-role">{u.role}</span>
-                      </div>
-                      {isOnline && <span className="online-label">LIVE</span>}
+              ) : visibleOnlineUsernames.length > 0 ? (
+                visibleOnlineUsernames.map((username, idx) => (
+                  <div key={idx} className="user-item is-online">
+                    <span className="status-indicator"></span>
+                    <div className="user-info">
+                      <span className="username">{username}</span>
+                      <span className="user-role">en ligne</span>
                     </div>
-                  );
-                })
+                    <span className="online-label">LIVE</span>
+                  </div>
+                ))
               ) : (
                 <div className="log-line" style={{ color: '#b0b0b0' }}>
-                  Aucun utilisateur enregistré
+                  Aucun utilisateur en ligne
                 </div>
               )}
             </div>

@@ -5,16 +5,18 @@ import { RedisIoAdapter } from './redis-io.adapter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // CONFIGURATION CORS : Accepte ton local et ton domaine
+  // CONFIGURATION CORS STRICTE
   app.enableCors({
     origin: [
-      "http://localhost:3000",
+      "http://localhost:5173",
+      "https://govostage.vercel.app",
       "https://stage.govo.fr",
-      "https://ton-projet.vercel.app" // Si tu utilises Vercel
     ],
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Accept', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    exposedHeaders: ['Content-Length', 'X-JSON-Response'],
+    maxAge: 3600,
   });
 
   // Optionnel : app.setGlobalPrefix('api'); // À activer si tu veux /api/chat/...

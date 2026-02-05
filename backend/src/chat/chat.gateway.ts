@@ -9,29 +9,54 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
+import { JwtService } from '@nestjs/jwt';
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://stage.govo.fr",
+      "https://www.stage.govo.fr",
+    ],
+    methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
   },
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  // On stocke les utilisateurs : Map<SocketId, Username>
+  // On stocke les utilisateurs authentifiés : Map<SocketId, Username>
   private activeUsers = new Map<string, string>();
 
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async handleConnection(client: Socket) {
-    // On récupère le nom depuis la query string (ex: ?username=Bot-1)
-    const username = client.handshake.query.username as string || `Guest-${client.id.slice(0, 4)}`;
-    
-    this.activeUsers.set(client.id, username);
-    console.log(`✅ ${username} connecté (${client.id})`);
+    // Vérifier le token JWT si fourni et n'enregistrer que les utilisateurs authentifiés
+    const token = client.handshake.query.token as string;
+    let username: string | undefined = undefined;
+
+    if (token) {
+      try {
+        const payload = this.jwtService.verify(token as string);
+        username = (payload && (payload as any).username) ? String((payload as any).username) : undefined;
+      } catch (e) {
+        console.log(`⚠️ Jeton invalide pour la connexion ${client.id}`);
+      }
+    }
+
+    // Si on a bien un username authentifié, on l'ajoute à la liste active
+    if (username) {
+      this.activeUsers.set(client.id, username);
+      console.log(`✅ ${username} connecté (${client.id})`);
+    } else {
+      console.log(`ℹ️ Connexion anonyme (non authentifiée) ${client.id} — n'ajoute pas aux utilisateurs affichés`);
+    }
 
     // 1. Envoyer l'historique au nouveau venu
     try {
