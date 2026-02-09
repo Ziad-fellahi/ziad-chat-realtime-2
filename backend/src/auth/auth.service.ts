@@ -14,10 +14,12 @@ export class AuthService {
   ) {}
 
   async register(username: string, password: string, role: string = 'user') {
+    const allowedRoles = ['user', 'admin', 'moniteur', 'secretaire'];
+    const resolvedRole = allowedRoles.includes(role) ? role : 'user';
     const existing = await this.userModel.findOne({ username });
     if (existing) throw new UnauthorizedException('User already exists');
     const hashed = await bcrypt.hash(password, 10);
-    const user = new this.userModel({ username, password: hashed, role });
+    const user = new this.userModel({ username, password: hashed, role: resolvedRole });
     await user.save();
     return { username: user.username, role: user.role };
   }
