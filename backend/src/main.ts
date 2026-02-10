@@ -13,11 +13,19 @@ async function bootstrap() {
   app.useStaticAssets(staticPath, { prefix: '/' });
 
   // CONFIGURATION CORS
- app.enableCors({
-  origin: true, // Autorise toutes les origines (y compris ton localhost:4000)
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  credentials: true,
-});
+  app.enableCors({
+    origin: [
+      'http://localhost:4000',         // Frontend React en développement
+      'http://localhost:3000',         // Alternative
+      'http://127.0.0.1:4000',
+      'https://stage.govo.fr',         // Backend hébergé
+      'https://govostage.vercel.app/', // Frontend hébergé sur Vercel
+      /^https:\/\/.*\.vercel\.app$/,   // Tous les domaines Vercel
+      /^https:\/\/ziad-chat-realtime-2.*\.vercel\.app$/, // Votre projet Vercel spécifique
+    ],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
 
   // Optionnel : app.setGlobalPrefix('api'); // À activer si tu veux /api/chat/...
 
