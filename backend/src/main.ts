@@ -34,8 +34,11 @@ async function bootstrap() {
   await redisIoAdapter.connectToRedis();
   app.useWebSocketAdapter(redisIoAdapter);
 
-  // Écoute sur le port 8080 (visé par Nginx)
-  await app.listen(8080, '0.0.0.0'); 
-  console.log(`🚀 Serveur Backend Cluster sur le port 8080`);
+  // Port configuré via variable d'environnement ou 5000 par défaut (visé par Nginx)
+  const port = process.env.PORT || 5000;
+  await app.listen(port, '0.0.0.0'); 
+  console.log(`🚀 Serveur Backend Cluster sur le port ${port}`);
+  console.log(`📡 CORS activé pour Vercel et localhost`);
+  console.log(`🌐 Environnement: ${process.env.NODE_ENV || 'development'}`);
 }
 bootstrap();

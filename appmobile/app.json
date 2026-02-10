@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "GoVo Mobile",
+    "slug": "govo-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.govo.mobile"
+    },
+    "android": {
+      "package": "com.govo.mobile"
+    },
+    "scheme": "govo",
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}

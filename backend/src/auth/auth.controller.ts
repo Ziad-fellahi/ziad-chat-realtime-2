@@ -7,10 +7,10 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  @UseGuards(JwtAuthGuard)
   async register(@Body() body: { username: string; password: string; role?: string }, @Req() req: any) {
     try {
-      const requestingUser = req.user;
+      // Si l'utilisateur est authentifié, on récupère ses infos pour les permissions
+      const requestingUser = req.user || null;
       return this.authService.register(body.username, body.password, body.role || 'eleve', requestingUser);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -27,6 +27,7 @@ export class AuthController {
   }
 
   @Get('users')
+  @UseGuards(JwtAuthGuard)
   async getUsers() {
     try {
       const users = await this.authService.getAllUsers();

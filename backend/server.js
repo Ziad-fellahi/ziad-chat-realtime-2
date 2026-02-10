@@ -90,8 +90,10 @@ async function run() {
     });
   });
 
-  server.listen(8080, () => {
-    console.log('🚀 SERVEUR SUR PORT 8080');
+  const port = process.env.PORT || 5000;
+  server.listen(port, '0.0.0.0', () => {
+    console.log(`🚀 SERVEUR SUR PORT ${port}`);
+    console.log(`📍 Environnement: ${process.env.NODE_ENV || 'development'}`);
   });
 }
 

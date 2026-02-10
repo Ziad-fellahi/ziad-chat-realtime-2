@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './user.schema';
@@ -19,7 +19,7 @@ export class AuthService {
     const cleanPassword = password?.trim();
 
     if (!cleanUsername || !cleanPassword) {
-      throw new UnauthorizedException('Username and password are required');
+      throw new BadRequestException('Username and password are required');
     }
 
     const allowedRoles = ['eleve', 'admin', 'moniteur', 'secretaire'];
@@ -30,24 +30,24 @@ export class AuthService {
       if (requestingUser.role === 'moniteur') {
         // Les moniteurs ne peuvent créer que des moniteurs
         if (resolvedRole !== 'moniteur') {
-          throw new UnauthorizedException('Les moniteurs ne peuvent créer que des comptes moniteurs');
+          throw new BadRequestException('Les moniteurs ne peuvent créer que des comptes moniteurs');
         }
       } else if (requestingUser.role === 'secretaire') {
         // Les secrétaires ne peuvent créer que des secrétaires
         if (resolvedRole !== 'secretaire') {
-          throw new UnauthorizedException('Les secrétaires ne peuvent créer que des comptes secrétaires');
+          throw new BadRequestException('Les secrétaires ne peuvent créer que des comptes secrétaires');
         }
       } else if (requestingUser.role === 'eleve') {
         // Les élèves ne peuvent créer que des élèves
         if (resolvedRole !== 'eleve') {
-          throw new UnauthorizedException('Les élèves ne peuvent créer que des comptes élèves');
+          throw new BadRequestException('Les élèves ne peuvent créer que des comptes élèves');
         }
       }
       // Les admins peuvent tout créer (pas de restriction)
     }
 
     const existing = await this.userModel.findOne({ username: cleanUsername });
-    if (existing) throw new UnauthorizedException('User already exists');
+    if (existing) throw new BadRequestException('User already exists');
     const hashed = await bcrypt.hash(cleanPassword, 10);
     const user = new this.userModel({ username: cleanUsername, password: hashed, role: resolvedRole });
     await user.save();
