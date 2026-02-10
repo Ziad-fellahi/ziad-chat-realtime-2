@@ -1,14 +1,14 @@
 :root {
-  --bg-darker: #1a1c1e;
-  --bg-panel: #242729;
-  --accent: #007bff;
-  --text-white: #ffffff;
-  --text-muted: #a0a0a0;
-  --border: #333639;
+  --bg-darker: #f8fafc;
+  --bg-panel: #ffffff;
+  --accent: #2563eb;
+  --text-white: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
 }
 
 .chat-page-wrapper {
-  background-color: var(--bg-darker);
+  background: linear-gradient(135deg, #bfdbfe 0%, #dbeafe 25%, #e0f2fe 50%, #ecfeff 75%, #f0f9ff 100%);
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -26,14 +26,14 @@
   flex-direction: column;
   border-radius: 12px;
   border: 1px solid var(--border);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 30px rgba(15,23,42,0.12);
   overflow: hidden;
 }
 
 /* Header */
 .chat-header {
   padding: 15px 25px;
-  background-color: #2b2e31;
+  background-color: #f1f5f9;
   border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
@@ -59,10 +59,10 @@
 
 .message-avatar {
   width: 38px; height: 38px;
-  background-color: #444;
+  background-color: #cbd5e1;
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
-  font-weight: bold; color: white; flex-shrink: 0;
+  font-weight: bold; color: #0f172a; flex-shrink: 0;
 }
 
 .message-content { display: flex; flex-direction: column; max-width: 70%; }
@@ -71,15 +71,15 @@
 .message-info { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
 .is-me .message-info { flex-direction: row-reverse; }
 
-.message-user { font-weight: 600; color: #fff; font-size: 0.95rem; }
+.message-user { font-weight: 600; color: #0f172a; font-size: 0.95rem; }
 .admin-badge { background: #f44336; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 4px; font-weight: bold; }
 
 /* --- LA BULLE ET L'HEURE (CORRECTION ICI) --- */
 .message-bubble {
-  background-color: #36393e;
+  background-color: #e2e8f0;
   padding: 10px 14px;
   border-radius: 0 12px 12px 12px;
-  color: #dcddde;
+  color: #0f172a;
   display: flex;
   flex-direction: column; /* Force l'heure à aller en bas */
   min-width: 80px;
@@ -100,7 +100,7 @@
 
 .message-time-inside {
   font-size: 0.7rem !important; /* Taille petite */
-  color: #ffffff !important; /* FORCER LE BLANC PUR */
+  color: #475569 !important;
   align-self: flex-end; /* Calé à droite */
   margin-top: 4px;
   opacity: 0.8; /* Légère transparence pour le style */
@@ -110,14 +110,14 @@
 }
 
 .is-me .message-time-inside {
-  color: #ffffff !important; /* Blanc pur aussi pour tes messages */
+  color: #ffffff !important;
   opacity: 0.9;
 }
 
 /* Input Area */
 .chat-input-area { padding: 20px; border-top: 1px solid var(--border); }
 .input-box {
-  background-color: #40444b;
+  background-color: #f1f5f9;
   border-radius: 8px;
   padding: 10px;
   display: flex; gap: 10px;
@@ -125,7 +125,7 @@
 
 textarea {
   flex: 1; background: transparent; border: none; outline: none;
-  color: white; resize: none; font-size: 1rem; font-family: inherit;
+  color: #0f172a; resize: none; font-size: 1rem; font-family: inherit;
 }
 
 .send-button {

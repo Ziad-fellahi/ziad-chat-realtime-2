@@ -1,0 +1,53 @@
+.hours-page {
+  min-height: 100vh;
+  padding: 120px 24px 60px;
+  background: linear-gradient(135deg, #bfdbfe 0%, #dbeafe 25%, #e0f2fe 50%, #ecfeff 75%, #f0f9ff 100%);
+  color: #0f172a;
+}
+
+.hours-header {
+  max-width: 900px;
+  margin: 0 auto 40px;
+  text-align: left;
+}
+
+.hours-header h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin-bottom: 8px;
+}
+
+.hours-header p {
+  color: #475569;
+}
+
+.hours-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.hours-card {
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+.hours-card h2 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+}
+
+.hours-value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.hours-hint {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}

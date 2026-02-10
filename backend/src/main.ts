@@ -12,19 +12,12 @@ async function bootstrap() {
   const staticPath = join(__dirname, '..', '..', 'frontend', 'public');
   app.useStaticAssets(staticPath, { prefix: '/' });
 
-  // CONFIGURATION CORS STRICTE
-  app.enableCors({
-    origin: [
-      "http://localhost:5173",
-      "https://govostage.vercel.app",
-      "https://stage.govo.fr",
-    ],
-    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-    exposedHeaders: ['Content-Length', 'X-JSON-Response'],
-    maxAge: 3600,
-  });
+  // CONFIGURATION CORS
+ app.enableCors({
+  origin: true, // Autorise toutes les origines (y compris ton localhost:4000)
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  credentials: true,
+});
 
   // Optionnel : app.setGlobalPrefix('api'); // À activer si tu veux /api/chat/...
 

@@ -10,6 +10,8 @@ function Navbar() {
   
   let username = 'Invité';
   let isAdmin = false;
+  let isMoniteur = false;
+  let isSecretaire = false;
   let isLoggedIn = !!token;
 
   if (isLoggedIn) {
@@ -21,6 +23,8 @@ function Navbar() {
       // ÉTAPE 2 : Récupération
       username = payload.username || 'User';
       isAdmin = payload.role === 'admin';
+      isMoniteur = payload.role === 'moniteur';
+      isSecretaire = payload.role === 'secretaire';
 
       // ÉTAPE 3 : Réparation automatique du localStorage
       if (!storedUser) {
@@ -44,16 +48,36 @@ function Navbar() {
     <nav className="navbar-glass">
       <div className="navbar-container">
         <Link to="/" className="navbar-brand">
-          <Logo size={32} />
+          <Logo size={48} />
         </Link>
 
         <div className="navbar-links">
           <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Accueil</Link>
-          <Link to="/git" className={`nav-link ${location.pathname === '/git' ? 'active' : ''}`}>Git Info</Link>
-          <Link to="/admin-docs" className={`nav-link ${location.pathname === '/admin-docs' ? 'active' : ''}`}>Admin Docs</Link>
+          {isAdmin && (
+            <>
+              <Link to="/git" className={`nav-link ${location.pathname === '/git' ? 'active' : ''}`}>Git Info</Link>
+              <Link to="/admin-docs" className={`nav-link ${location.pathname === '/admin-docs' ? 'active' : ''}`}>Admin Docs</Link>
+            </>
+          )}
 
           {isLoggedIn && (
             <>
+              {(isAdmin || isMoniteur) && (
+                <Link to="/moniteur" className={`nav-link ${location.pathname === '/moniteur' ? 'active' : ''}`}>
+                  Espace moniteur
+                </Link>
+              )}
+              {(isAdmin || isSecretaire) && (
+                <Link to="/secretaire" className={`nav-link ${location.pathname === '/secretaire' ? 'active' : ''}`}>
+                  Secrétariat
+                </Link>
+              )}
+              <Link to="/hours" className={`nav-link ${location.pathname === '/hours' ? 'active' : ''}`}>
+                Planning de conduite
+              </Link>
+              <Link to="/skills" className={`nav-link ${location.pathname === '/skills' ? 'active' : ''}`}>
+                Mes compétences
+              </Link>
               <Link to="/chat" className={`nav-link ${location.pathname === '/chat' ? 'active' : ''}`}>Chat</Link>
               {isAdmin && (
                 <Link to="/dashboard" className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>
@@ -76,6 +100,8 @@ function Navbar() {
                 <div className="avatar-circle">{username.charAt(0).toUpperCase()}</div>
                 <span className="username-text">{username}</span>
                 {isAdmin && <span className="admin-tag-nav">ADMIN</span>}
+                {isMoniteur && <span className="role-tag-nav">MONITEUR</span>}
+                {isSecretaire && <span className="role-tag-nav">SECRÉTARIAT</span>}
               </div>
               <button onClick={handleLogout} className="btn-logout-icon" title="Déconnexion">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

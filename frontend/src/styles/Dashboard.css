@@ -1,19 +1,19 @@
 /* Variables de couleurs */
 :root {
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --bg-dark: #0f1419;
-  --card-bg: rgba(255, 255, 255, 0.05);
-  --card-border: rgba(255, 255, 255, 0.1);
-  --text-primary: #ffffff;
-  --text-secondary: #b0b0b0;
+  --primary-gradient: linear-gradient(135deg, #2563eb 0%, #22c55e 100%);
+  --secondary-gradient: linear-gradient(135deg, #60a5fa 0%, #34d399 100%);
+  --bg-dark: #f8fafc;
+  --card-bg: #ffffff;
+  --card-border: rgba(148, 163, 184, 0.35);
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
   --accent-online: #10b981;
   --accent-offline: #ef4444;
 }
 
 /* Dashboard Container */
 .dashboard-container {
-  background: linear-gradient(135deg, #0f1419 0%, #1a2332 100%);
+  background: linear-gradient(135deg, #bfdbfe 0%, #dbeafe 25%, #e0f2fe 50%, #ecfeff 75%, #f0f9ff 100%);
   min-height: 100vh;
   padding: 20px;
   padding-top: 90px;
@@ -25,10 +25,10 @@
   align-items: center;
   margin-bottom: 30px;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.03);
+  background: #ffffff;
   border: 1px solid var(--card-border);
   border-radius: 16px;
-  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
   animation: slideDown 0.6s ease-out;
 }
 
@@ -118,11 +118,11 @@
 }
 
 .user-management-card {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 16px;
   padding: 20px;
-  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
   height: fit-content;
 }
 
@@ -164,17 +164,17 @@
   align-items: center;
   padding: 12px;
   margin-bottom: 10px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
+  border: 1px solid rgba(148, 163, 184, 0.35);
   border-radius: 10px;
   transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .user-item:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: #eef2f7;
   transform: translateX(4px);
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(148, 163, 184, 0.5);
 }
 
 .user-item.is-online {
@@ -238,11 +238,11 @@
 }
 
 .terminal-card {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 16px;
   overflow: hidden;
-  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
   display: flex;
   flex-direction: column;
   height: 500px;
@@ -254,7 +254,7 @@
   align-items: center;
   gap: 12px;
   padding: 16px 20px;
-  background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.05) 100%);
+  background: #f1f5f9;
   border-bottom: 1px solid var(--card-border);
 }
 
