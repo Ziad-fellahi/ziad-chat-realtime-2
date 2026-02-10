@@ -11,10 +11,10 @@ export class User {
 
   @Prop({
     required: true,
-    default: 'user',
-    enum: ['user', 'admin', 'moniteur', 'secretaire'],
+    default: 'eleve',
+    enum: ['eleve', 'admin', 'moniteur', 'secretaire'],
   })
-  role: string; // 'user' | 'admin' | 'moniteur' | 'secretaire'
+  role: string; // 'eleve' | 'admin' | 'moniteur' | 'secretaire'
 }
 
 export type UserDocument = User & Document;

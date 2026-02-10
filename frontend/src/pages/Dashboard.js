@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
+import { useAuth } from '../contexts/AuthContext';
 import '../styles/Dashboard.css';
 
 function Dashboard() {
   const navigate = useNavigate();
+  const { user, token } = useAuth();
   const [messages, setMessages] = useState([]);
   const [allRegisteredUsers, setAllRegisteredUsers] = useState([]);
   const [onlineUsernames, setOnlineUsernames] = useState([]);
@@ -16,18 +18,11 @@ function Dashboard() {
   const terminalRef = useRef(null);
   const counterRef = useRef(0);
 
-  // Récupération sécurisée du localStorage
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const token = localStorage.getItem('token');
-
   useEffect(() => {
-    // 1. Protection des routes
-    if (!token || user?.role !== 'admin') {
-      navigate('/login');
-      return;
-    }
+    // ProtectedRoute gère déjà l'authentification, on peut directement initialiser Socket.io
+    if (!token || !user) return;
 
-    // 2. Socket.io pour le temps réel
+    // Socket.io pour le temps réel
     socketRef.current = io(process.env.REACT_APP_BACKEND_URL, {
       transports: ['websocket', 'polling'],
       reconnection: true,
@@ -82,7 +77,7 @@ function Dashboard() {
       if (socketRef.current) socketRef.current.disconnect();
       clearInterval(metricsInterval);
     };
-  }, [token, navigate, user.username, user.role]);
+  }, [token, user]);
 
   // Scroll automatique
   useEffect(() => {
@@ -91,13 +86,95 @@ function Dashboard() {
     }
   }, [messages]);
 
-  if (!token || user?.role !== 'admin') return null;
-
   const visibleOnlineUsernames = onlineUsernames.filter(u => typeof u === 'string' && !u.startsWith('Guest-'));
   const onlineCount = visibleOnlineUsernames.length;
 
   return (
     <div className="dashboard-container">
+      {/* Panneau de gestion rapide */}
+      <div style={{ 
+        padding: '20px', 
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        marginBottom: '20px',
+        borderRadius: '12px',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
+      }}>
+        <h2 style={{ color: '#fff', marginBottom: '20px', fontSize: '1.8rem' }}>
+          🔐 Administration - Gestion Globale
+        </h2>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+          gap: '16px' 
+        }}>
+          <div 
+            onClick={() => navigate('/moniteur')}
+            style={{
+              background: 'rgba(255,255,255,0.15)',
+              backdropFilter: 'blur(10px)',
+              padding: '20px',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              border: '1px solid rgba(255,255,255,0.2)'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.25)'}
+            onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
+          >
+            <h3 style={{ color: '#fff', marginBottom: '8px', fontSize: '1.2rem' }}>
+              👨‍🏫 Gestion Moniteurs
+            </h3>
+            <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem' }}>
+              Créer et gérer les comptes moniteurs
+            </p>
+          </div>
+
+          <div 
+            onClick={() => navigate('/secretaire')}
+            style={{
+              background: 'rgba(255,255,255,0.15)',
+              backdropFilter: 'blur(10px)',
+              padding: '20px',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              border: '1px solid rgba(255,255,255,0.2)'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.25)'}
+            onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
+          >
+            <h3 style={{ color: '#fff', marginBottom: '8px', fontSize: '1.2rem' }}>
+              📋 Gestion Secrétariat
+            </h3>
+            <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem' }}>
+              Créer et gérer les comptes secrétaires
+            </p>
+          </div>
+
+          <div 
+            onClick={() => navigate('/eleve')}
+            style={{
+              background: 'rgba(255,255,255,0.15)',
+              backdropFilter: 'blur(10px)',
+              padding: '20px',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              border: '1px solid rgba(255,255,255,0.2)'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.25)'}
+            onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
+          >
+            <h3 style={{ color: '#fff', marginBottom: '8px', fontSize: '1.2rem' }}>
+              🎓 Gestion Élèves
+            </h3>
+            <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem' }}>
+              Créer et gérer les comptes élèves
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="db-main-grid">
         <div className="db-sidebar">
           <div className="user-management-card">

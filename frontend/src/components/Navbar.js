@@ -1,47 +1,24 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import Logo from './Logotemp'; 
 import '../styles/Navbar.css';
 
 function Navbar() {
   const location = useLocation();
-  const token = localStorage.getItem('token');
-  const storedUser = localStorage.getItem('user');
+  const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuth();
   
-  let username = 'Invité';
-  let isAdmin = false;
-  let isMoniteur = false;
-  let isSecretaire = false;
-  let isLoggedIn = !!token;
-
-  if (isLoggedIn) {
-    try {
-      // ÉTAPE 1 : Décodage sécurisé pour Vercel/Navigateur
-      // On utilise window.atob pour s'assurer qu'on est côté client
-      const payload = JSON.parse(window.atob(token.split('.')[1]));
-      
-      // ÉTAPE 2 : Récupération
-      username = payload.username || 'User';
-      isAdmin = payload.role === 'admin';
-      isMoniteur = payload.role === 'moniteur';
-      isSecretaire = payload.role === 'secretaire';
-
-      // ÉTAPE 3 : Réparation automatique du localStorage
-      if (!storedUser) {
-        localStorage.setItem('user', JSON.stringify({ 
-          username: username, 
-          role: payload.role 
-        }));
-      }
-    } catch (e) {
-      console.error("Session error:", e);
-      // Ne pas déconnecter l'utilisateur ici pour éviter les boucles infinies
-    }
-  }
+  const username = user?.username || 'Invité';
+  const role = user?.role;
+  const isAdmin = role === 'admin';
+  const isMoniteur = role === 'moniteur';
+  const isSecretaire = role === 'secretaire';
+  const isEleve = role === 'eleve' || role === 'user'; // Support des deux rôles pour élève
 
   const handleLogout = () => {
-    localStorage.clear();
-    window.location.href = '/login'; 
+    logout();
+    navigate('/login');
   };
 
   return (
@@ -52,44 +29,68 @@ function Navbar() {
         </Link>
 
         <div className="navbar-links">
-          <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Accueil</Link>
+          {/* Accueil visible uniquement pour les non-connectés */}
+          {!isAuthenticated && (
+            <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Accueil</Link>
+          )}
+          
+          {/* Admin voit tout */}
           {isAdmin && (
             <>
+              <Link to="/dashboard" className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>
+                Mon Espace Admin
+              </Link>
+              <Link to="/moniteur" className={`nav-link ${location.pathname === '/moniteur' ? 'active' : ''}`}>
+                Gestion Moniteurs
+              </Link>
+              <Link to="/secretaire" className={`nav-link ${location.pathname === '/secretaire' ? 'active' : ''}`}>
+                Gestion Secrétariat
+              </Link>
+              <Link to="/eleve" className={`nav-link ${location.pathname === '/eleve' ? 'active' : ''}`}>
+                Gestion Élèves
+              </Link>
               <Link to="/git" className={`nav-link ${location.pathname === '/git' ? 'active' : ''}`}>Git Info</Link>
               <Link to="/admin-docs" className={`nav-link ${location.pathname === '/admin-docs' ? 'active' : ''}`}>Admin Docs</Link>
             </>
           )}
 
-          {isLoggedIn && (
+          {/* Moniteur voit uniquement son espace personnel */}
+          {isMoniteur && !isAdmin && (
+            <Link to="/moniteur" className={`nav-link ${location.pathname === '/moniteur' ? 'active' : ''}`}>
+              Mon Espace
+            </Link>
+          )}
+
+          {/* Secrétaire voit uniquement son espace personnel */}
+          {isSecretaire && !isAdmin && (
+            <Link to="/secretaire" className={`nav-link ${location.pathname === '/secretaire' ? 'active' : ''}`}>
+              Mon espace
+            </Link>
+          )}
+
+          {/* Élève voit uniquement son espace */}
+          {isEleve && !isAdmin && (
+            <Link to="/eleve" className={`nav-link ${location.pathname === '/eleve' ? 'active' : ''}`}>
+              Mon espace
+            </Link>
+          )}
+
+          {/* Fonctionnalités communes à tous les utilisateurs connectés */}
+          {isAuthenticated && (
             <>
-              {(isAdmin || isMoniteur) && (
-                <Link to="/moniteur" className={`nav-link ${location.pathname === '/moniteur' ? 'active' : ''}`}>
-                  Espace moniteur
-                </Link>
-              )}
-              {(isAdmin || isSecretaire) && (
-                <Link to="/secretaire" className={`nav-link ${location.pathname === '/secretaire' ? 'active' : ''}`}>
-                  Secrétariat
-                </Link>
-              )}
               <Link to="/hours" className={`nav-link ${location.pathname === '/hours' ? 'active' : ''}`}>
-                Planning de conduite
+                Planning
               </Link>
               <Link to="/skills" className={`nav-link ${location.pathname === '/skills' ? 'active' : ''}`}>
-                Mes compétences
+                Compétences
               </Link>
               <Link to="/chat" className={`nav-link ${location.pathname === '/chat' ? 'active' : ''}`}>Chat</Link>
-              {isAdmin && (
-                <Link to="/dashboard" className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>
-                  Tableau de bord
-                </Link>
-              )}
             </>
           )}
 
           <div className="nav-divider"></div>
 
-          {!isLoggedIn ? (
+          {!isAuthenticated ? (
             <div className="auth-buttons">
               <Link to="/login" className="btn-text">Connexion</Link>
               <Link to="/register" className="btn-primary-sm">S'inscrire</Link>

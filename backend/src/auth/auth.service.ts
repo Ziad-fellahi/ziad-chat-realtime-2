@@ -13,21 +13,68 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(username: string, password: string, role: string = 'user') {
-    const allowedRoles = ['user', 'admin', 'moniteur', 'secretaire'];
-    const resolvedRole = allowedRoles.includes(role) ? role : 'user';
-    const existing = await this.userModel.findOne({ username });
+  async register(username: string, password: string, role: string = 'eleve', requestingUser?: any) {
+    // Nettoyage des espaces vides
+    const cleanUsername = username?.trim();
+    const cleanPassword = password?.trim();
+
+    if (!cleanUsername || !cleanPassword) {
+      throw new UnauthorizedException('Username and password are required');
+    }
+
+    const allowedRoles = ['eleve', 'admin', 'moniteur', 'secretaire'];
+    let resolvedRole = allowedRoles.includes(role) ? role : 'eleve';
+
+    // Validation des permissions selon le rôle du demandeur
+    if (requestingUser) {
+      if (requestingUser.role === 'moniteur') {
+        // Les moniteurs ne peuvent créer que des moniteurs
+        if (resolvedRole !== 'moniteur') {
+          throw new UnauthorizedException('Les moniteurs ne peuvent créer que des comptes moniteurs');
+        }
+      } else if (requestingUser.role === 'secretaire') {
+        // Les secrétaires ne peuvent créer que des secrétaires
+        if (resolvedRole !== 'secretaire') {
+          throw new UnauthorizedException('Les secrétaires ne peuvent créer que des comptes secrétaires');
+        }
+      } else if (requestingUser.role === 'eleve') {
+        // Les élèves ne peuvent créer que des élèves
+        if (resolvedRole !== 'eleve') {
+          throw new UnauthorizedException('Les élèves ne peuvent créer que des comptes élèves');
+        }
+      }
+      // Les admins peuvent tout créer (pas de restriction)
+    }
+
+    const existing = await this.userModel.findOne({ username: cleanUsername });
     if (existing) throw new UnauthorizedException('User already exists');
-    const hashed = await bcrypt.hash(password, 10);
-    const user = new this.userModel({ username, password: hashed, role: resolvedRole });
+    const hashed = await bcrypt.hash(cleanPassword, 10);
+    const user = new this.userModel({ username: cleanUsername, password: hashed, role: resolvedRole });
     await user.save();
-    return { username: user.username, role: user.role };
+    
+    // Générer un JWT pour le compte nouvellement créé
+    const payload = { sub: user._id, username: user.username, role: user.role };
+    const access_token = this.jwtService.sign(payload);
+    
+    return { 
+      username: user.username, 
+      role: user.role,
+      access_token
+    };
   }
 
   async login(username: string, password: string) {
-    const user = await this.userModel.findOne({ username });
+    // Nettoyage des espaces vides
+    const cleanUsername = username?.trim();
+    const cleanPassword = password?.trim();
+
+    if (!cleanUsername || !cleanPassword) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const user = await this.userModel.findOne({ username: cleanUsername });
     if (!user) throw new UnauthorizedException('Invalid credentials');
-    const valid = await bcrypt.compare(password, user.password);
+    const valid = await bcrypt.compare(cleanPassword, user.password);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
     const payload = { sub: user._id, username: user.username, role: user.role };
     return {

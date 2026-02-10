@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import '../styles/Login.css';
 
 export default function Login() {
@@ -7,34 +8,47 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-
-  
-  
+  const { login } = useAuth();
 
 const handleSubmit = async (e) => {
   e.preventDefault();
   setError('');
   try {
-    // Utilise ton nouveau domaine sans / à la fin
-    const BACKEND_URL = "https://stage.govo.fr";
+    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://stage.govo.fr";
 
     const res = await fetch(`${BACKEND_URL}/auth/login`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
       },
-      mode: 'cors', // Force le mode CORS
-      body: JSON.stringify({ username, password }),
+      mode: 'cors',
+      body: JSON.stringify({ 
+        username: username.trim(), 
+        password: password.trim() 
+      }),
     });
 
     if (!res.ok) throw new Error('Identifiants invalides');
     
     const data = await res.json();
-    localStorage.setItem('token', data.access_token);
-    if (data.role) {
-      localStorage.setItem('role', data.role);
-    }
-    navigate('/');
+    
+    // Utiliser la fonction login du contexte
+    login(data.access_token, {
+      username: data.username,
+      role: data.role,
+    });
+    
+    // Redirection automatique selon le rôle (avec replace pour éviter retour arrière)
+    const rolePages = {
+      admin: '/dashboard',
+      moniteur: '/moniteur',
+      secretaire: '/secretaire',
+      eleve: '/eleve',
+      user: '/eleve', // Alias pour élève
+    };
+    
+    const targetPage = rolePages[data.role] || '/';
+    navigate(targetPage, { replace: true });
   } catch (err) {
     setError(err.message);
   }
