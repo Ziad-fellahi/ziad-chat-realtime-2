@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
+import { API_BASE_URL } from '../api/config';
 import '../styles/ChatPage.css';
 
 let socket;
@@ -25,7 +26,7 @@ function ChatPage() {
     } catch (e) { navigate('/login'); }
 
     if (!socket) {
-      socket = io(process.env.REACT_APP_BACKEND_URL, {
+      socket = io(API_BASE_URL, {
         transports: ['websocket']
       });
     }

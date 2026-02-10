@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../api/config';
 import '../styles/Register.css';
 
 export default function Register() {
@@ -12,10 +13,8 @@ export default function Register() {
     e.preventDefault();
     setError('');
 
-    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://stage.govo.fr';
-
     try {
-      const res = await fetch(`${BACKEND_URL}/auth/register`, {
+      const res = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

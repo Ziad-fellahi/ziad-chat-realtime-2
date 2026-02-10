@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { API_BASE_URL } from '../api/config';
 import '../styles/Login.css';
 
 export default function Login() {
@@ -14,9 +15,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   setError('');
   try {
-    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://stage.govo.fr";
-
-    const res = await fetch(`${BACKEND_URL}/auth/login`, {
+    const res = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',

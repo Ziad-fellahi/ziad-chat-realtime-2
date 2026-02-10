@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { useAuth } from '../contexts/AuthContext';
+import { API_BASE_URL } from '../api/config';
 import '../styles/Dashboard.css';
 
 function Dashboard() {
@@ -23,7 +24,7 @@ function Dashboard() {
     if (!token || !user) return;
 
     // Socket.io pour le temps réel
-    socketRef.current = io(process.env.REACT_APP_BACKEND_URL, {
+    socketRef.current = io(API_BASE_URL, {
       transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionDelay: 1000,

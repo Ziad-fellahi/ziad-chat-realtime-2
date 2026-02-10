@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE_URL } from '../api/config';
 import '../styles/AdminDocs.css';
 
 const AdminDocs = () => {
@@ -12,7 +13,7 @@ const AdminDocs = () => {
     });
   };
 
-  const dynamicAdminCmd = `curl -X POST http://localhost:8080/auth/register -H 'Content-Type: application/json' -d '{"username":"${adminName}", "password":"${adminName}", "role":"admin"}'`;
+  const dynamicAdminCmd = `curl -X POST ${API_BASE_URL}/auth/register -H 'Content-Type: application/json' -d '{"username":"${adminName}", "password":"${adminName}", "role":"admin"}'`;
 
   const sections = [
     {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Copy } from 'lucide-react';
+import { API_BASE_URL } from '../api/config';
 
 function QuickUserCreate({ allowedRoles = ['eleve', 'moniteur', 'secretaire', 'admin'] }) {
   const [username, setUsername] = useState('');
@@ -43,7 +44,7 @@ function QuickUserCreate({ allowedRoles = ['eleve', 'moniteur', 'secretaire', 'a
     const finalPassword = password.trim() || generateSecurePassword();
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/auth/register`, {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
